@@ -495,9 +495,11 @@ class Simulation ( ):
         print('******    proposal     ****** :', '\n', typesvh, '\n')
         for f in range(len(sol)): 
             print(self.parameters["stations"][f],  sol[f])
-        print('******    forecast     ****** :', '\n', forecast)         
-        
-        
+            
+        self.compareStations(sol, typesvh)    
+            
+        print('')    
+        print('******    forecast     ****** :', '\n', forecast)     
         print('')
         print('****** forecast period ****** :', fpini.strftime(self.formato), fpfin.strftime(self.formato))          
         print(' vehicles used in this period :', '\n', typesvh, '\n')
@@ -535,7 +537,60 @@ class Simulation ( ):
                 # forecast.append(int(lastw[f][v]) + int(sol[f][v]))
         pass
         
-        
+  
+  
+    def compareStations(self, sol, typesvh): 
+        for i in range(len(sol[0])):
+            posc=[]
+            negc=[]	
+            spos=0
+            sneg=0
+            # print(i)
+            for f in range(len(sol)): 
+                # print(self.parameters["stations"][f],  sol[f])  
+                if sol[f][i] > 0:  
+                    posc.append( [self.parameters["stations"][f], sol[f][i]]) 
+                    spos=spos+sol[f][i]
+                    # print(self.parameters["stations"][f], sol[f][i], spos)
+                elif sol[f][i] < 0: 
+                    negc.append( [self.parameters["stations"][f], -1*sol[f][i]]) 
+                    sneg=sneg-sol[f][i]
+                    # print(self.parameters["stations"][f], sol[f][i], sneg)
+      
+            # print(posc)         
+            # print(negc)        
+            
+            
+            while True:
+                if spos > 0 and sneg > 0:	
+                    tmp=0
+                    tm2=0
+                    ind=0
+                    in2=0
+                    
+                    for f in range(len(posc)):
+                        if posc[f][1] > 0:
+                            tmp = posc[f][1]
+                            ind = f
+                            break
+                            
+                    for f in range(len(negc)):
+                        if negc[f][1] > 0:
+                            tm2 = negc[f][1]
+                            in2 = f    
+                            break                   
+                    
+                    if tmp < tm2 :
+                    	tm2 = tmp   
+                    
+                    posc[ind][1] = posc[ind][1] - tm2
+                    negc[in2][1] = negc[in2][1] - tm2
+                    spos = spos - tm2
+                    sneg = sneg - tm2
+                    print('move ', tm2, typesvh[i], 'from', negc[in2][0], 'to ', posc[ind][0])
+                    
+                else:
+                    break		
         
     def run(self):   
         # ...............................
