@@ -1,0 +1,7 @@
+#!/bin/bash
+for i in {0..1}
+  do  
+     echo "Welcome $i"
+     python3 Testing.py
+  done
+

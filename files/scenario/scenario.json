@@ -1,0 +1,12 @@
+{
+	"stations": ["Aila", "Independencia", "Santiago"], 
+	"company": ["Nelly"], 
+	"nsimulations": 1, 
+	"weekstraining": 4,  
+	"finitest": [2020, 11, 30] ,  
+	"ffintest": [2020, 12, 6], 
+        "fileconfigGA": "GARF2", 
+        "evalsGA": 5000, 
+        "expGA": 1, 
+	"printFile": false 
+}
