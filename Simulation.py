@@ -182,8 +182,12 @@ class Simulation ( ):
             if kmCFleet == 'Operativo' :
                 status = 'AVAILABLE'
             elif kmCFleet == 'Taller' :
-                status = 'In Maintenance'               
+                status = 'In Maintenance' 
+            # --- Revisar    
+            elif kmCFleet == 'Salvamento' :
+                status = 'AVAILABLE'              
             else : 
+                # --- incluye Remarketing
                 status = 'UNAVAILABLE'  
         # print('---4---', prov, ';', flag, ';', statusX, ';', status)        
                      
@@ -466,7 +470,7 @@ class Simulation ( ):
             print('********* :', es.ver(infoNextweek.typesOfVehicles, valorf, fe ) )
           
             
-            self.analysis(feini, fefin, fpini, fpfin, sol, infoLastweek.typesOfVehicles,  infoLastweek.OPFLMAXIMA,  infoNextweek.OPFLMAXIMA,  infoNextweek.MAXIMA,  infoNextweek.MANMAXIMA,  infoNextweek.MANMEDIA) 
+            self.analysis(feini, fefin, fpini, fpfin, sol, infoLastweek.typesOfVehicles,  infoLastweek.OPFLMAXIMA,  infoNextweek.OPFLMAXIMA,  infoNextweek.MAXIMA,  infoNextweek.MANMAXIMA,  infoNextweek.MANMEDIA, infoStations) 
 
 
 
@@ -479,7 +483,7 @@ class Simulation ( ):
         
        
        
-    def analysis (self, feini, fefin, fpini, fpfin, sol, typesvh, lastw, forew, MAXIMA, MANMAX, MANMEDIA ):   
+    def analysis (self, feini, fefin, fpini, fpfin, sol, typesvh, lastw, forew, MAXIMA, MANMAX, MANMEDIA, infoStations ):   
         print('\n\n')
         
         print('****** analysis period ****** :', feini.strftime(self.formato), fefin.strftime(self.formato))    
@@ -513,6 +517,10 @@ class Simulation ( ):
             print('\n******    stations     ****** :', self.parameters["stations"][f])
  
             for v in range(len(sol[f])): 
+                
+                if self.nogroupin(f, v, typesvh, infoStations ):
+                    continue
+                
                 print(typesvh[v])
                 print(forecast[f][v], 'covers peak demand', int(MAXIMA[f][v]), ' : ', end ='')
                 if forecast[f][v] >= int(MAXIMA[f][v]):
@@ -537,8 +545,25 @@ class Simulation ( ):
                 # forecast.append(int(lastw[f][v]) + int(sol[f][v]))
         pass
         
+    
   
-  
+    def nogroupin(self, w, i, typesvh, infoStations):
+        value = True
+        try:
+            ind = infoStations[w][0][0].index(typesvh[i]) 
+            if ind != -1:
+                value = False
+            else :    
+                pass
+        except:  
+            pass 
+        
+        
+        return value 
+    
+        
+        
+        
     def compareStations(self, sol, typesvh): 
         for i in range(len(sol[0])):
             posc=[]
