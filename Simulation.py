@@ -673,10 +673,11 @@ class Simulation ( ):
                 print('********* :', sol,  infoLastweek.TYPES, infoNextweek.typesOfVehicles, valorf, fe )    
                 print('********* :', es.ver(infoNextweek.typesOfVehicles, valorf, fe ) )
               
-                
-                self.analysis(feini, fefin, fpini, fpfin, sol, infoLastweek.typesOfVehicles,  infoLastweek.OPFLMAXIMA,  infoNextweek.OPFLMAXIMA,  infoNextweek.MAXIMA,  infoNextweek.MANMAXIMA,  infoNextweek.MANMEDIA, infoStations) 
+                self.analysis(forecast, feini, fefin, fpini, fpfin, sol, infoLastweek.typesOfVehicles,  infoLastweek.OPFLMAXIMA,  infoNextweek.OPFLMAXIMA,  infoNextweek.MAXIMA,  infoNextweek.MANMAXIMA,  infoNextweek.MANMEDIA, infoStations) 
 
-
+            else :
+				
+                self.analysis(forecast, feini, fefin, fpini, fpfin, sol, infoLastweek.typesOfVehicles,  infoLastweek.OPFLMAXIMA) 
 
             # ------------
             # actualizar fechas
@@ -687,7 +688,7 @@ class Simulation ( ):
         
        
        
-    def analysis (self, feini, fefin, fpini, fpfin, sol, typesvh, lastw, forew, MAXIMA, MANMAX, MANMEDIA, infoStations ):   
+    def analysis (self, flagfor, feini, fefin, fpini, fpfin, sol, typesvh, lastw, forew=None, MAXIMA=None, MANMAX=None, MANMEDIA=None, infoStations=None):   
         print('\n\n')
         
         print('****** analysis period ****** :', feini.strftime(self.formato), fefin.strftime(self.formato))    
@@ -710,50 +711,57 @@ class Simulation ( ):
             print(self.parameters["stations"][f],  sol[f])
         
         print('')    
-        self.compareStations(sol, typesvh)    
-            
+        self.compareStations(sol, typesvh)   
         print('')    
-        print('******    forecast     ****** :', '\n', forecast)     
+        
+        
+        print('******    forecast     ****** :')     
         print('')
-        print('****** forecast period ****** :', fpini.strftime(self.formato), fpfin.strftime(self.formato))          
-        print(' vehicles used in this period :', '\n', typesvh, '\n')
         for f in range(len(sol)): 
-            print(self.parameters["stations"][f], forew[f])
-        print('\n\n')
- 
-    
-        print('* comparison of the proposal* :') 
-        for f in range(len(sol)): 
-            print('\n******    stations     ****** :', self.parameters["stations"][f])
- 
-            for v in range(len(sol[f])): 
-                
-                if self.nogroupin(f, v, typesvh, infoStations ):
-                    continue
-                
-                print(typesvh[v])
-                print(forecast[f][v], 'covers peak demand', int(MAXIMA[f][v]), ' : ', end ='')
-                if forecast[f][v] >= int(MAXIMA[f][v]):
-                    print('yes')
-                else :   
-                    print('no')
-                
-                
-                print(forecast[f][v], 'covers peak demand and average maintenance', (int(MAXIMA[f][v])+int(MANMEDIA[f][v])), ' : ', end ='')
-                if forecast[f][v] >= (int(MAXIMA[f][v])+int(MANMEDIA[f][v])):
-                    print('yes')
-                else :   
-                    print('no')   
-                
-                
-                print(forecast[f][v], 'covers peak demand and maintenance peak', (int(MAXIMA[f][v])+int(MANMAX[f][v])), ' : ', end ='')
-                if forecast[f][v] >= (int(MAXIMA[f][v])+int(MANMAX[f][v])):
-                    print('yes')
-                else :   
-                    print('no')    
-                print() 
-                # forecast.append(int(lastw[f][v]) + int(sol[f][v]))
-        pass
+            print(self.parameters["stations"][f], forecast[f])
+        print('')
+        
+        
+        if flagfor==True:
+            print('****** forecast period ****** :', fpini.strftime(self.formato), fpfin.strftime(self.formato))          
+            print(' vehicles used in this period :', '\n', typesvh, '\n')
+            for f in range(len(sol)): 
+                print(self.parameters["stations"][f], forew[f])
+            print('\n\n')
+     
+        
+            print('* comparison of the proposal* :') 
+            for f in range(len(sol)): 
+                print('\n******    stations     ****** :', self.parameters["stations"][f])
+     
+                for v in range(len(sol[f])): 
+                    
+                    if self.nogroupin(f, v, typesvh, infoStations ):
+                        continue
+                    
+                    print(typesvh[v])
+                    print(forecast[f][v], 'covers peak demand', int(MAXIMA[f][v]), ' : ', end ='')
+                    if forecast[f][v] >= int(MAXIMA[f][v]):
+                        print('yes')
+                    else :   
+                        print('no')
+                    
+                    
+                    print(forecast[f][v], 'covers peak demand and average maintenance', (int(MAXIMA[f][v])+int(MANMEDIA[f][v])), ' : ', end ='')
+                    if forecast[f][v] >= (int(MAXIMA[f][v])+int(MANMEDIA[f][v])):
+                        print('yes')
+                    else :   
+                        print('no')   
+                    
+                    
+                    print(forecast[f][v], 'covers peak demand and maintenance peak', (int(MAXIMA[f][v])+int(MANMAX[f][v])), ' : ', end ='')
+                    if forecast[f][v] >= (int(MAXIMA[f][v])+int(MANMAX[f][v])):
+                        print('yes')
+                    else :   
+                        print('no')    
+                    print() 
+                    # forecast.append(int(lastw[f][v]) + int(sol[f][v]))
+            pass
         
     
   
@@ -770,8 +778,7 @@ class Simulation ( ):
         
         
         return value 
-    
-        
+     
         
         
     def compareStations(self, sol, typesvh): 
@@ -829,7 +836,7 @@ class Simulation ( ):
         
         
         
-    def run(self):   
+    def run(self, forecast=True):   
         # ...............................
         # Paso 1. leer Data 
         # definimos la clase para conectarnos a la base de datos
@@ -853,6 +860,6 @@ class Simulation ( ):
         else:
             self.companies = self.parameters["company"]
             
-        self.sim()        
+        self.sim(forecast)        
 
  
