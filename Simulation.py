@@ -13,6 +13,8 @@ from Estacion import *
 from IndAndVar import *
 from problem.CarRentalFleetR3 import *
 from algorithm.Entity import *
+import sys
+import matplotlib.pyplot as plt
 
 
 class Simulation ( ): 
@@ -67,6 +69,7 @@ class Simulation ( ):
         self.parameters["company" ] = company            
     
             
+            
     def setstations(self, stations):   
         self.parameters["stations" ] = stations 
         
@@ -110,7 +113,34 @@ class Simulation ( ):
         # print(len(self.estacion), len(self.empresa), len(cliente))   
         # print("-----------")  
         # print(self.estacion, self.empresa, cliente)
+        print("-----------")  
+        print(len(self.estacion))  
+    
+
+    def readStation2(self):   
+        query = self.db.query("SELECT e.nombre, em.nombre, c.nombre_comercial FROM km100.estacion e JOIN km100.empresa em on em.id_empresa = e.id_empresa JOIN km100.cliente c on c.id = em.cliente_id") 
+         
+        self.estacion = []
+        self.empresa = []
+        cliente = []
+        for t in query:
+            # print(t)  
+            try:
+                r = self.estacion.index(t[0])
+                if  r == -1:
+                    self.estacion.append(t[0])
+                    self.empresa.append(t[1])
+                    cliente.append(t[2])  
+            except:
+                    self.estacion.append(t[0])
+                    self.empresa.append(t[1])
+                    cliente.append(t[2])    
+        # print("***********")             
+        # print(len(self.estacion), len(self.empresa), len(cliente))   
+        # print("-----------")  
+        # print(self.estacion, self.empresa, cliente)
        
+        
         
             
     def readCat(self):   
@@ -124,9 +154,9 @@ class Simulation ( ):
                     self.cat.append(t[0])            
             except:
                 self.cat.append(t[0])      
-        # print("***********")         
-        # print(len(self.cat)) 
-        # print(self.cat) 
+#        print("***********")         
+#        print(len(self.cat)) 
+#        print(self.cat) 
         
         
         
@@ -192,10 +222,136 @@ class Simulation ( ):
         # print('---4---', prov, ';', flag, ';', statusX, ';', status)        
                      
         return status 
-
+    
+    
+    
+    def graphs(self, data, labl, stations):
+        
+        for i in range(len(data)):    
+          
+            fig, axs = plt.subplots(1, 2, sharex=False)
+            (ax1, ax2) = axs
+    
+            to_plot = []
+            nv = []
+            for k in range(len(data[i][0])):
+                o = np.array(data[i][2][k])
+                # print(o) 
+                to_plot.append(o)
+                nv.append(k+1) 
+ 
+            ax1.boxplot(to_plot)
+            ax1.tick_params(labelrotation=-90)
+            ax1.set_xticklabels(data[i][0])
+            # ax1.xticks(nv, data[i][0])
+ 
+            
+            if len(to_plot) == 1 :
+                # ax2.plot(data[0][1], to_plot[0])
+                ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])	
+                
+            elif len(to_plot) == 2 :
+                # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1])	
+                ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
+                ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])  
+            elif len(to_plot) == 3 :
+                # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2])	
+                ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
+                ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
+                ax2.plot(data[0][1], to_plot[2], label=data[i][0][2])         
+            elif len(to_plot) == 4 :
+                # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3])			
+                ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
+                ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
+                ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
+                ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])		
+            
+            elif len(to_plot) == 5 :
+                # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4])
+                ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
+                ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
+                ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
+                ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])	 
+                ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])        
+            elif len(to_plot) == 6 :
+                # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5])
+                ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
+                ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
+                ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
+                ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])
+                ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])
+                ax2.plot(data[0][1], to_plot[5], label=data[i][0][5])  
+            elif len(to_plot) == 7 :
+                # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6])		
+                ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
+                ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
+                ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
+                ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])
+                ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])
+                ax2.plot(data[0][1], to_plot[5], label=data[i][0][5]) 
+                ax2.plot(data[0][1], to_plot[6], label=data[i][0][6])
+	               
+            elif len(to_plot) == 8 :
+                # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6], data[0][1], to_plot[7])		
+                ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
+                ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
+                ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
+                ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])
+                ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])
+                ax2.plot(data[0][1], to_plot[5], label=data[i][0][5]) 
+                ax2.plot(data[0][1], to_plot[6], label=data[i][0][6])
+                ax2.plot(data[0][1], to_plot[7], label=data[i][0][7])
+            elif len(to_plot) == 9 :
+                # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6], data[0][1], to_plot[7], data[0][1], to_plot[8])
+                ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
+                ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
+                ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
+                ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])
+                ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])
+                ax2.plot(data[0][1], to_plot[5], label=data[i][0][5]) 
+                ax2.plot(data[0][1], to_plot[6], label=data[i][0][6]) 
+                ax2.plot(data[0][1], to_plot[7], label=data[i][0][7])
+                ax2.plot(data[0][1], to_plot[8], label=data[i][0][8]) 
+            elif len(to_plot) == 10 :
+                # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6], data[0][1], to_plot[7], data[0][1], to_plot[8], data[0][1], to_plot[9])	
+                ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
+                ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
+                ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
+                ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])
+                ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])
+                ax2.plot(data[0][1], to_plot[5], label=data[i][0][5]) 
+                ax2.plot(data[0][1], to_plot[6], label=data[i][0][6])  
+                ax2.plot(data[0][1], to_plot[7], label=data[i][0][7])
+                ax2.plot(data[0][1], to_plot[8], label=data[i][0][8])
+                ax2.plot(data[0][1], to_plot[9], label=data[i][0][9])
+            elif len(to_plot) == 11 :
+                # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6], data[0][1], to_plot[7], data[0][1], to_plot[8], data[0][1], to_plot[9], data[0][1], to_plot[10])
+                ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
+                ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
+                ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
+                ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])
+                ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])
+                ax2.plot(data[0][1], to_plot[5], label=data[i][0][5]) 
+                ax2.plot(data[0][1], to_plot[6], label=data[i][0][6])
+                ax2.plot(data[0][1], to_plot[7], label=data[i][0][7])
+                ax2.plot(data[0][1], to_plot[8], label=data[i][0][8])
+                ax2.plot(data[0][1], to_plot[9], label=data[i][0][9])
+                ax2.plot(data[0][1], to_plot[10], label=data[i][0][10])
+            
+            ax2.tick_params(labelrotation=-90)
+            ax2.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')               
+            # plt.show()            
+            # plt.ioff()
+            # 
+            # plt.close(fig)
+            plt.savefig('figures/'+stations[i]+' '+labl+".png", bbox_inches='tight')
+            plt.close(fig)
+            pass
      
         
-    def sim(self): 
+        
+    def sim(self, forecast=True): 
+        
         print(self.parameters)                
         weeksimu = (self.parameters["nsimulations"]+self.parameters["weekstraining"])*7 
         finitest = datetime(self.parameters["finitest"][0], self.parameters["finitest"][1], self.parameters["finitest"][2], 0, 0, 0)
@@ -230,8 +386,11 @@ class Simulation ( ):
             
             stations = []
             infoStations = []   
+            self.onRentData = []  
+            
             
             print('\n\n---Training---', feini.strftime(self.formato), fefin.strftime(self.formato))   
+            
             for w in range(len(self.parameters["stations"])): 
                 
                 # obtenemos Los indicadores de cada estación por grupo a partir de la
@@ -279,18 +438,31 @@ class Simulation ( ):
                 
                 stations.append(es) 
                 infoStations.append(estmp)  
-            
+                self.onRentData.append(es.onRentToGraph()) 
             
             typesOfVehicles   = [ ]
             infoTraining = IndAndVar()
             infoTraining.setInstance(feini.strftime(self.formato), fefin.strftime(self.formato), stations, typesOfVehicles, infoStations)
-            infoTraining.prints( ) 
-    
-                
-            # ------------
+            
+            if infoTraining.verifydata() == True:
+                print() 
+                print('************************************') 
+                print("You do not have data in the requested time interval, i.e.,", feini.strftime(self.formato), fefin.strftime(self.formato))
+                print('************************************\n')
+                sys.exit()
+                 
+            infoTraining.prints( )   
+             
+            self.graphs(self.onRentData, 'T ' +feini.strftime(self.formato)+ ' '+ fefin.strftime(self.formato), self.parameters["stations"])   
+            
+            
+            # ---------------------------------------------
+            # ---------------------------------------------
             # Ejecución del algoritmo genético con los parámetros previos
-            # ------------  
-            print('\n', '\n', 'algoritmo genético', '\n', '\n')    
+            # ---------------------------------------------
+            # ---------------------------------------------
+            
+            print('\n', '\n', 'Algoritmo genético', '\n', '\n')    
         
             sol= []
         
@@ -341,15 +513,21 @@ class Simulation ( ):
             print(sol)   
             
             
-            # ------------
+            # ---------------------------------------------
+            # ---------------------------------------------
             # Evaluar la propuesta con la información propia de 
             # la siguiente semana
-            # ------------       
+            # ---------------------------------------------
+            # ---------------------------------------------
             
-            # ------------      
+            
+            # ---------------------------------------------
+            # ---------------------------------------------
             # valores previos a la semana de prueba a los que se aplicará el pronóstico
-            # ------------   
+            # ---------------------------------------------
+            # ---------------------------------------------
          
+            
             stations = []
             infoStations = []
             print('\n\n---Lastweek---', (fpini - timedelta(days=7)).strftime(self.formato), (fpfin - timedelta(days=7)).strftime(self.formato))    
@@ -363,7 +541,7 @@ class Simulation ( ):
                 his = []    
                 estmp = []
                 
-                # ------------
+                # ---------------------------------------------
                 for t in query:
                     # print(t)  
                     # print('---2---', t[0], t[1], t[4], t[3], t[2]) 
@@ -399,78 +577,104 @@ class Simulation ( ):
                 
             infoLastweek = IndAndVar()
             infoLastweek.setInstance((fpini - timedelta(days=7)).strftime(self.formato), (fpfin - timedelta(days=7)).strftime(self.formato), stations, typesOfVehicles, infoStations)
+            
+            if infoLastweek.verifydata() == True:
+                print() 
+                print('************************************') 
+                print("You do not have data in the requested time interval, i.e.,", feini.strftime(self.formato), fefin.strftime(self.formato))
+                print('************************************\n')
+                sys.exit()
             infoLastweek.prints( )  
          
             
-            # ------------      
+            # ---------------------------------------------
+            # ---------------------------------------------      
             # Datos de la semana de pronósticos
-            # ------------       
+            # ---------------------------------------------
+            # ---------------------------------------------
+            
             stations = []
-            infoStations = []
-            print('\n\n---Nextweek---', fpini.strftime(self.formato), fpfin.strftime(self.formato))
-            for w in range(len(self.parameters["stations"])): 
-                nam = "SELECT kmbi.flota_historica_proveedor.mva, v.id  , descripcion_estado, fecha , clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.mva= kmbi.flota_historica_proveedor.mva JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
-                query = self.db.query(nam, (self.parameters["stations"][w], self.companies[w], fpini.strftime(self.formato), fpfin.strftime(self.formato), )) 
-               
-                es = Estacion(self.parameters["stations"][w])
+            infoStations = []            
+            self.onRentData = []
             
-                his = []    
-                estmp = []
+            if forecast==True:
+            
+                print('\n\n---Nextweek---', fpini.strftime(self.formato), fpfin.strftime(self.formato))
                 
- 
-                for t in query:
-                    # print(t)  
-                    # print('---2---', t[0], t[1], t[4], t[3], t[2]) 
-                    if es.gets(t[0]):
-                        es.addD(t[0], t[3], t[2].strip(" ")) 
-                    else :        
-                        es.add2(t[0], t[1], t[4], t[3], t[2].strip(" ")) 
-                    his.append(t)     
-                    
-                        
-                nam2 = "SELECT  v.mva, fh.bandera_renta, fh.nombre_estado, fh.fecha FROM km100.vehiculo v JOIN kmbi.flota_historica fh on v.id = fh.id_vehiculo JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND  fh.fecha BETWEEN %s AND %s"
-                query2 = db2.query(nam2, (self.parameters["stations"][w], self.companies[w], fpini.strftime(self.formato), fpfin.strftime(self.formato), )) 
-                 
+                
+                for w in range(len(self.parameters["stations"])): 
+                    nam = "SELECT kmbi.flota_historica_proveedor.mva, v.id  , descripcion_estado, fecha , clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.mva= kmbi.flota_historica_proveedor.mva JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
+                    query = self.db.query(nam, (self.parameters["stations"][w], self.companies[w], fpini.strftime(self.formato), fpfin.strftime(self.formato), )) 
+                   
+                    es = Estacion(self.parameters["stations"][w])
+                
+                    his = []    
+                    estmp = [] 
+     
         
-                for tv in query2: 
-                    # print(tv)  
-                    # print('---3---', tv[0], tv[1], tv[3], tv[2]) 
-                    mkstatus = self.makedecision( " ", tv[1], tv[2]) 
-                    es.compare(tv[0], tv[3], mkstatus)  
-          
-                    # print("---")    
-                    # print("---")    
-                # es.prints()  
-                estmp.append(es.indtip())   
-                estmp.append(es.indtipc())   
-                estmp.append(es.indtipg(mantenimiento))  
-                estmp.append(es.indtipg(disponibilidad))  
-                estmp.append(es.indtipg(['On Rent', 'AVAILABLE']))   
-                estmp.append(es.indtipg(['On Rent', 'AVAILABLE', 'In Maintenance' ])) 
-                
-                stations.append(es) 
-                infoStations.append(estmp)
+                    for t in query:
+                        # print(t)  
+                        # print('---2---', t[0], t[1], t[4], t[3], t[2]) 
+                        if es.gets(t[0]):
+                            es.addD(t[0], t[3], t[2].strip(" ")) 
+                        else :        
+                            es.add2(t[0], t[1], t[4], t[3], t[2].strip(" ")) 
+                        his.append(t)     
+                        
+                            
+                    nam2 = "SELECT  v.mva, fh.bandera_renta, fh.nombre_estado, fh.fecha FROM km100.vehiculo v JOIN kmbi.flota_historica fh on v.id = fh.id_vehiculo JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND  fh.fecha BETWEEN %s AND %s"
+                    query2 = db2.query(nam2, (self.parameters["stations"][w], self.companies[w], fpini.strftime(self.formato), fpfin.strftime(self.formato), )) 
+                     
             
-            infoNextweek = IndAndVar()
-            infoNextweek.setInstance(fpini.strftime(self.formato), fpfin.strftime(self.formato), stations, typesOfVehicles, infoStations)
-            infoNextweek.prints(sol)  
-            
+                    for tv in query2: 
+                        # print(tv)  
+                        # print('---3---', tv[0], tv[1], tv[3], tv[2]) 
+                        mkstatus = self.makedecision( " ", tv[1], tv[2]) 
+                        es.compare(tv[0], tv[3], mkstatus)  
+              
+                        # print("---")    
+                        # print("---")    
+                    # es.prints()  
+                    estmp.append(es.indtip())   
+                    estmp.append(es.indtipc())   
+                    estmp.append(es.indtipg(mantenimiento))  
+                    estmp.append(es.indtipg(disponibilidad))  
+                    estmp.append(es.indtipg(['On Rent', 'AVAILABLE']))   
+                    estmp.append(es.indtipg(['On Rent', 'AVAILABLE', 'In Maintenance' ])) 
+                    
+                    stations.append(es) 
+                    infoStations.append(estmp)
+                    self.onRentData.append(es.onRentToGraph())
                 
-            fpinix = fpini 
-            fe = []
-            ie = 1
-            while fpinix <= fpfin :  
-                fe.append(fpinix.strftime(self.formato))
-                fpinix = fpini + timedelta(days=ie) 
-                ie = ie + 1
+                infoNextweek = IndAndVar()
+                infoNextweek.setInstance(fpini.strftime(self.formato), fpfin.strftime(self.formato), stations, typesOfVehicles, infoStations)
                 
+                if infoNextweek.verifydata() == True:
+                    print() 
+                    print('************************************') 
+                    print("You do not have data in the requested time interval, i.e.,", feini.strftime(self.formato), fefin.strftime(self.formato))
+                    print('************************************\n')
+                    sys.exit()
+                    
+                infoNextweek.prints(sol)  
+                self.graphs(self.onRentData, 'T ' +fpini.strftime(self.formato)+ ' '+ fpfin.strftime(self.formato), self.parameters["stations"])   
                 
-            valorf = np.array(infoLastweek.TYPES) + np.array(sol)            
-            print('********* :', sol,  infoLastweek.TYPES, infoNextweek.typesOfVehicles, valorf, fe )    
-            print('********* :', es.ver(infoNextweek.typesOfVehicles, valorf, fe ) )
-          
-            
-            self.analysis(feini, fefin, fpini, fpfin, sol, infoLastweek.typesOfVehicles,  infoLastweek.OPFLMAXIMA,  infoNextweek.OPFLMAXIMA,  infoNextweek.MAXIMA,  infoNextweek.MANMAXIMA,  infoNextweek.MANMEDIA, infoStations) 
+                    
+                fpinix = fpini 
+                fe = []
+                ie = 1
+                while fpinix <= fpfin :  
+                    fe.append(fpinix.strftime(self.formato))
+                    fpinix = fpini + timedelta(days=ie) 
+                    ie = ie + 1
+                    
+                    
+                valorf = np.array(infoLastweek.TYPES) + np.array(sol)            
+                print('********* :', sol,  infoLastweek.TYPES, infoNextweek.typesOfVehicles, valorf, fe )    
+                print('********* :', es.ver(infoNextweek.typesOfVehicles, valorf, fe ) )
+              
+                
+                self.analysis(feini, fefin, fpini, fpfin, sol, infoLastweek.typesOfVehicles,  infoLastweek.OPFLMAXIMA,  infoNextweek.OPFLMAXIMA,  infoNextweek.MAXIMA,  infoNextweek.MANMAXIMA,  infoNextweek.MANMEDIA, infoStations) 
 
 
 
@@ -487,7 +691,7 @@ class Simulation ( ):
         print('\n\n')
         
         print('****** analysis period ****** :', feini.strftime(self.formato), fefin.strftime(self.formato))    
-  
+        print('')
         forecast = [] 
         
         for f in range(len(sol)):  
@@ -496,10 +700,16 @@ class Simulation ( ):
                 cforecast.append(int(lastw[f][v]) + int(sol[f][v]))
             forecast.append(cforecast)    
             
+            
+        # self.graphs(self.onRentData) 
+        
+            
         print('******    proposal     ****** :', '\n', typesvh, '\n')
+        print('')
         for f in range(len(sol)): 
             print(self.parameters["stations"][f],  sol[f])
-            
+        
+        print('')    
         self.compareStations(sol, typesvh)    
             
         print('')    
@@ -565,6 +775,7 @@ class Simulation ( ):
         
         
     def compareStations(self, sol, typesvh): 
+        
         for i in range(len(sol[0])):
             posc=[]
             negc=[]	
@@ -583,8 +794,7 @@ class Simulation ( ):
                     # print(self.parameters["stations"][f], sol[f][i], sneg)
       
             # print(posc)         
-            # print(negc)        
-            
+            # print(negc)    
             
             while True:
                 if spos > 0 and sneg > 0:	
@@ -616,6 +826,8 @@ class Simulation ( ):
                     
                 else:
                     break		
+        
+        
         
     def run(self):   
         # ...............................

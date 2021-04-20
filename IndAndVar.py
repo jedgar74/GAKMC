@@ -8,7 +8,6 @@ Created on Wed Apr  7 10:37:38 2021
 
 import numpy as np
 
-
 class IndAndVar(object):   
     
     def __init__(self):
@@ -146,4 +145,14 @@ class IndAndVar(object):
             print('valor MAXIMA   :', self.MAXIMA)   
             print('valor MM DM    :', valor4) 
      
- 
+
+    def verifydata(self):
+        ou = False
+        if self.SETV==0 and len(self.typesOfVehicles)==0 :
+            ou = True
+            # sys.exit()
+            # sys.exit("You do not have data in the requested time interval, i.e.,", ran1, ran2)
+     
+        return ou
+
+

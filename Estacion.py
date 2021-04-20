@@ -273,8 +273,34 @@ class Estacion(object):
                      fo.append(0)                     
     
         return [sum(fo), fo, rr, rd]    
+     
+       
+        
+    def onRentToGraph(self):
+        # print("   ") 
+        tTipos  = []  
+        tData  = [] 
+        #print(self.f)  
+        
+        for i in range(len(self.tip)):  
+            ind = 0
+            tTipos.append(self.tip[i])
+            data  = [0] * len(self.f)
+            for k in range(len(self.mvaveh)):   
+                c = self.v[k]
+                #print(c.contipos(['On Rent']))
+                if c.tipo == self.tip[i] and c.active == True:
+                    ind = ind + 1
+                    for j in range(len(c.fecha)):   
+ 
+                        e = self.f.index(c.fecha[j]) 
+                        if c.status[j] == 'On Rent': 
+                            data[e] = data[e] + 1
+                            
     
-
-
+            tData.append(data)     
+            
+        # print(tTipos, '\n', self.f, '\n', tData)           
+        return [tTipos, self.f, tData]
 
    

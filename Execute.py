@@ -34,4 +34,10 @@ parameters = readParameters(namefile)
 
 # simulation = Simulation()
 simulation = Simulation(parameters)
+# simulation.setcompany(["Budget"])
+# simulation.setstations(["Aila", "Bavaro", "Puerto Plata"])
+    
+simulation.setfinitest([2021, 2, 22])
+simulation.setffintest([2021, 2, 28])
+print(simulation.parameters) 
 simulation.run()
