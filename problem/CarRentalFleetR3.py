@@ -212,7 +212,8 @@ class CarRentalFleetR3 (Problem):
             
 			for j in range(self.stations.SETV):  
                 # Definimos la propuesta de aumento o disminución de vehículos por grupo 
-				dif = s.vars[self.stations.STATIONS*i+j]-0.5 
+				# dif = s.vars[self.stations.STATIONS*i+j]-0.5 
+				dif = s.vars[self.stations.SETV*i+j]-0.5
                 
 				# print("")    
 				vs = int( round(dif * self.variab[i][j])  )
@@ -395,8 +396,9 @@ class CarRentalFleetR3 (Problem):
 				for l in range(len(self.stations.VFEC[i][j]) ):
 					if self.stations.VFEC[i][j][l]  > 0:
 						facc = facc +1
-					if self.stations.VFEC[i][j][l]/self.stations.NumeroDias > 0.8:
-						fact = fact +1  
+					if self.stations.NumeroDias > 0:
+						if self.stations.VFEC[i][j][l]/self.stations.NumeroDias > 0.8:
+						    fact = fact +1  
 				veh.append(fact  )
 				vec.append(facc  )
 			self.VFEC.append(veh) 

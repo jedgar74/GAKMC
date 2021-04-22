@@ -278,8 +278,8 @@ class Estacion(object):
         
     def onRentToGraph(self):
         # print("   ") 
-        tTipos  = []  
-        tData  = [] 
+        tTipos = []  
+        tData = [] 
         #print(self.f)  
         
         for i in range(len(self.tip)):  
