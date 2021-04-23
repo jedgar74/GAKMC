@@ -198,7 +198,8 @@ class Simulation ( ):
 
     def readStation2(self):   
         query = self.db.query("SELECT e.nombre, em.nombre, c.nombre_comercial FROM km100.estacion e JOIN km100.empresa em on em.id_empresa = e.id_empresa JOIN km100.cliente c on c.id = em.cliente_id") 
-         
+        
+        self.labelestacion = []
         self.estacion = []
         self.empresa = []
         cliente = []
@@ -242,6 +243,7 @@ class Simulation ( ):
                     cliente.append(self.clientes[t].name) 
                     self.empresa.append(emp.name) 
                     self.estacion.append(emp.getEstacion(k))
+                    self.labelestacion.append(emp.getEstacion(k)+'('+emp.name+')')
                     # print(emp.getEstacion(k), '-',  emp.name, '-', self.clientes[t].name)
         # print("***********")             
         # print(len(self.estacion), len(self.empresa), len(cliente))   
@@ -346,11 +348,40 @@ class Simulation ( ):
     
     
     
-    def graphs(self, data, labl, stations):
-        data = self.emptydata(data)
+    def checkemptydata(self, data):
+        empty = False
+       
+        if len(data[0]) == 0 and len(data[1]) == 0 and len(data[2]) == 0:
+            empty = True 
         
-        for i in range(len(data)):    
-          
+            
+        return empty 
+
+
+    def sortfordate(self, fecha, valores): 
+       
+        for i in range(len(fecha)-1):
+            for j in range(i+1, len(fecha)):
+                if fecha[i] > fecha[j]:
+                     tmpf = fecha[i] 
+                     fecha[i] = fecha[j]
+                     fecha[j] = tmpf
+                     for k in range(len(valores)): 
+                         tmpv = valores[k][i] 
+                         valores[k][i] = valores[k][j]
+                         valores[k][j] = tmpv                    
+                     
+                     
+                     
+    
+    def graphs(self, data, labl, stations, companies):
+        #data = self.emptydata(data)
+        
+        for i in range(len(data)):   
+            
+            if self.checkemptydata(data[i]):
+                continue
+            
             fig, axs = plt.subplots(1, 2, sharex=False)
             (ax1, ax2) = axs
     
@@ -368,116 +399,152 @@ class Simulation ( ):
             # ax1.xticks(nv, data[i][0])
  
             try:
-                if len(to_plot) == 1 :
-                    # ax2.plot(data[0][1], to_plot[0])
-                    # print(stations[i])
-#                    print(data[0][1])
-#                    print(to_plot)
-#                    print(data[i][0])
-                    ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])	
+                self.sortfordate(data[i][1], to_plot) 
+                if len(to_plot) > 10 :   
+                    ax2.plot(data[i][1], to_plot[10], label=data[i][0][10])    
+                         
+                if len(to_plot) > 9 :       
+                    ax2.plot(data[i][1], to_plot[9], label=data[i][0][9])   
                     
-                elif len(to_plot) == 2 :
-                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1])	
-                    ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
-                    ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])  
-                elif len(to_plot) == 3 :
-                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2])	
-                    ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
-                    ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
-                    ax2.plot(data[0][1], to_plot[2], label=data[i][0][2])         
-                elif len(to_plot) == 4 :
-                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3])			
-                    ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
-                    ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
-                    ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
-                    ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])		
-                
-                elif len(to_plot) == 5 :
-                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4])
-                    ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
-                    ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
-                    ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
-                    ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])	 
-                    ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])        
-                elif len(to_plot) == 6 :
-                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5])
-                    ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
-                    ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
-                    ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
-                    ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])
-                    ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])
-                    ax2.plot(data[0][1], to_plot[5], label=data[i][0][5])  
-                elif len(to_plot) == 7 :
-                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6])		
-                    ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
-                    ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
-                    ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
-                    ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])
-                    ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])
-                    ax2.plot(data[0][1], to_plot[5], label=data[i][0][5]) 
-                    ax2.plot(data[0][1], to_plot[6], label=data[i][0][6])
-    	               
-                elif len(to_plot) == 8 :
-                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6], data[0][1], to_plot[7])		
-                    ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
-                    ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
-                    ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
-                    ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])
-                    ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])
-                    ax2.plot(data[0][1], to_plot[5], label=data[i][0][5]) 
-                    ax2.plot(data[0][1], to_plot[6], label=data[i][0][6])
-                    ax2.plot(data[0][1], to_plot[7], label=data[i][0][7])
-                elif len(to_plot) == 9 :
-                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6], data[0][1], to_plot[7], data[0][1], to_plot[8])
-                    ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
-                    ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
-                    ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
-                    ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])
-                    ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])
-                    ax2.plot(data[0][1], to_plot[5], label=data[i][0][5]) 
-                    ax2.plot(data[0][1], to_plot[6], label=data[i][0][6]) 
-                    ax2.plot(data[0][1], to_plot[7], label=data[i][0][7])
-                    ax2.plot(data[0][1], to_plot[8], label=data[i][0][8]) 
-                elif len(to_plot) == 10 :
-                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6], data[0][1], to_plot[7], data[0][1], to_plot[8], data[0][1], to_plot[9])	
-                    ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
-                    ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
-                    ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
-                    ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])
-                    ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])
-                    ax2.plot(data[0][1], to_plot[5], label=data[i][0][5]) 
-                    ax2.plot(data[0][1], to_plot[6], label=data[i][0][6])  
-                    ax2.plot(data[0][1], to_plot[7], label=data[i][0][7])
-                    ax2.plot(data[0][1], to_plot[8], label=data[i][0][8])
-                    ax2.plot(data[0][1], to_plot[9], label=data[i][0][9])
-                elif len(to_plot) == 11 :
-                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6], data[0][1], to_plot[7], data[0][1], to_plot[8], data[0][1], to_plot[9], data[0][1], to_plot[10])
-                    ax2.plot(data[0][1], to_plot[0], label=data[i][0][0])
-                    ax2.plot(data[0][1], to_plot[1], label=data[i][0][1])
-                    ax2.plot(data[0][1], to_plot[2], label=data[i][0][2]) 
-                    ax2.plot(data[0][1], to_plot[3], label=data[i][0][3])
-                    ax2.plot(data[0][1], to_plot[4], label=data[i][0][4])
-                    ax2.plot(data[0][1], to_plot[5], label=data[i][0][5]) 
-                    ax2.plot(data[0][1], to_plot[6], label=data[i][0][6])
-                    ax2.plot(data[0][1], to_plot[7], label=data[i][0][7])
-                    ax2.plot(data[0][1], to_plot[8], label=data[i][0][8])
-                    ax2.plot(data[0][1], to_plot[9], label=data[i][0][9])
-                    ax2.plot(data[0][1], to_plot[10], label=data[i][0][10])
-                
+                if len(to_plot) > 8 :       
+                    ax2.plot(data[i][1], to_plot[8], label=data[i][0][8])   
+                                        
+                if len(to_plot) > 7 :       
+                    ax2.plot(data[i][1], to_plot[7], label=data[i][0][7])   
+                                        
+                if len(to_plot) > 6 :       
+                    ax2.plot(data[i][1], to_plot[6], label=data[i][0][6])   
+                    
+                if len(to_plot) > 5 :       
+                    ax2.plot(data[i][1], to_plot[5], label=data[i][0][5])   
+                                        
+                if len(to_plot) > 4 :        
+                    ax2.plot(data[i][1], to_plot[4], label=data[i][0][4])   
+                                        
+                if len(to_plot) > 3 :       
+                    ax2.plot(data[i][1], to_plot[3], label=data[i][0][3]) 
+                                        
+                if len(to_plot) > 2 :       
+                    ax2.plot(data[i][1], to_plot[2], label=data[i][0][2])   
+                                        
+                if len(to_plot) > 1 :       
+                    ax2.plot(data[i][1], to_plot[1], label=data[i][0][1]) 
+                                        
+                if len(to_plot) > 0 :       
+                    ax2.plot(data[i][1], to_plot[0], label=data[i][0][0])                    
+                    
+#                if len(to_plot) == 1 :
+#                    # ax2.plot(data[0][1], to_plot[0])
+##                    print(stations[i])
+##                    print(data[i][1])
+##                    print(to_plot)
+##                    print(data[i][0])
+#                    ax2.plot(data[i][1], to_plot[0], label=data[i][0][0])	
+#                    
+#                elif len(to_plot) == 2 :
+#                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1])	
+#                    ax2.plot(data[i][1], to_plot[0], label=data[i][0][0])
+#                    ax2.plot(data[i][1], to_plot[1], label=data[i][0][1])  
+#                elif len(to_plot) == 3 :
+#                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2])	
+#                    ax2.plot(data[i][1], to_plot[0], label=data[i][0][0])
+#                    ax2.plot(data[i][1], to_plot[1], label=data[i][0][1])
+#                    ax2.plot(data[i][1], to_plot[2], label=data[i][0][2])         
+#                elif len(to_plot) == 4 :
+#                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3])			
+#                    ax2.plot(data[i][1], to_plot[0], label=data[i][0][0])
+#                    ax2.plot(data[i][1], to_plot[1], label=data[i][0][1])
+#                    ax2.plot(data[i][1], to_plot[2], label=data[i][0][2]) 
+#                    ax2.plot(data[i][1], to_plot[3], label=data[i][0][3])		
+#                
+#                elif len(to_plot) == 5 :
+#                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4])
+#                    ax2.plot(data[i][1], to_plot[0], label=data[i][0][0])
+#                    ax2.plot(data[i][1], to_plot[1], label=data[i][0][1])
+#                    ax2.plot(data[i][1], to_plot[2], label=data[i][0][2]) 
+#                    ax2.plot(data[i][1], to_plot[3], label=data[i][0][3])	 
+#                    ax2.plot(data[i][1], to_plot[4], label=data[i][0][4])        
+#                elif len(to_plot) == 6 :
+#                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5])
+#                    print(data[i][1])
+#                    ax2.plot(data[i][1], to_plot[0], label=data[i][0][0])
+#                    ax2.plot(data[i][1], to_plot[1], label=data[i][0][1])
+#                    ax2.plot(data[i][1], to_plot[2], label=data[i][0][2]) 
+#                    ax2.plot(data[i][1], to_plot[3], label=data[i][0][3])
+#                    ax2.plot(data[i][1], to_plot[4], label=data[i][0][4])
+#                    ax2.plot(data[i][1], to_plot[5], label=data[i][0][5])  
+#                elif len(to_plot) == 7 :
+#                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6])		
+#                    ax2.plot(data[i][1], to_plot[0], label=data[i][0][0])
+#                    ax2.plot(data[i][1], to_plot[1], label=data[i][0][1])
+#                    ax2.plot(data[i][1], to_plot[2], label=data[i][0][2]) 
+#                    ax2.plot(data[i][1], to_plot[3], label=data[i][0][3])
+#                    ax2.plot(data[i][1], to_plot[4], label=data[i][0][4])
+#                    ax2.plot(data[i][1], to_plot[5], label=data[i][0][5]) 
+#                    ax2.plot(data[i][1], to_plot[6], label=data[i][0][6])
+#    	               
+#                elif len(to_plot) == 8 :
+#                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6], data[0][1], to_plot[7])		
+#                    ax2.plot(data[i][1], to_plot[0], label=data[i][0][0])
+#                    ax2.plot(data[i][1], to_plot[1], label=data[i][0][1])
+#                    ax2.plot(data[i][1], to_plot[2], label=data[i][0][2]) 
+#                    ax2.plot(data[i][1], to_plot[3], label=data[i][0][3])
+#                    ax2.plot(data[i][1], to_plot[4], label=data[i][0][4])
+#                    ax2.plot(data[i][1], to_plot[5], label=data[i][0][5]) 
+#                    ax2.plot(data[i][1], to_plot[6], label=data[i][0][6])
+#                    ax2.plot(data[i][1], to_plot[7], label=data[i][0][7])
+#                elif len(to_plot) == 9 :
+#                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6], data[0][1], to_plot[7], data[0][1], to_plot[8])
+#                    ax2.plot(data[i][1], to_plot[0], label=data[i][0][0])
+#                    ax2.plot(data[i][1], to_plot[1], label=data[i][0][1])
+#                    ax2.plot(data[i][1], to_plot[2], label=data[i][0][2]) 
+#                    ax2.plot(data[i][1], to_plot[3], label=data[i][0][3])
+#                    ax2.plot(data[i][1], to_plot[4], label=data[i][0][4])
+#                    ax2.plot(data[i][1], to_plot[5], label=data[i][0][5]) 
+#                    ax2.plot(data[i][1], to_plot[6], label=data[i][0][6]) 
+#                    ax2.plot(data[i][1], to_plot[7], label=data[i][0][7])
+#                    ax2.plot(data[i][1], to_plot[8], label=data[i][0][8]) 
+#                elif len(to_plot) == 10 :
+#                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6], data[0][1], to_plot[7], data[0][1], to_plot[8], data[0][1], to_plot[9])	
+#                    ax2.plot(data[i][1], to_plot[0], label=data[i][0][0])
+#                    ax2.plot(data[i][1], to_plot[1], label=data[i][0][1])
+#                    ax2.plot(data[i][1], to_plot[2], label=data[i][0][2]) 
+#                    ax2.plot(data[i][1], to_plot[3], label=data[i][0][3])
+#                    ax2.plot(data[i][1], to_plot[4], label=data[i][0][4])
+#                    ax2.plot(data[i][1], to_plot[5], label=data[i][0][5]) 
+#                    ax2.plot(data[i][1], to_plot[6], label=data[i][0][6])  
+#                    ax2.plot(data[i][1], to_plot[7], label=data[i][0][7])
+#                    ax2.plot(data[i][1], to_plot[8], label=data[i][0][8])
+#                    ax2.plot(data[i][1], to_plot[9], label=data[i][0][9])
+#                elif len(to_plot) == 11 :
+#                    # ax2.plot(data[0][1], to_plot[0], data[0][1], to_plot[1], data[0][1], to_plot[2], data[0][1], to_plot[3], data[0][1], to_plot[4], data[0][1], to_plot[5], data[0][1], to_plot[6], data[0][1], to_plot[7], data[0][1], to_plot[8], data[0][1], to_plot[9], data[0][1], to_plot[10])
+#                    ax2.plot(data[i][1], to_plot[0], label=data[i][0][0])
+#                    ax2.plot(data[i][1], to_plot[1], label=data[i][0][1])
+#                    ax2.plot(data[i][1], to_plot[2], label=data[i][0][2]) 
+#                    ax2.plot(data[i][1], to_plot[3], label=data[i][0][3])
+#                    ax2.plot(data[i][1], to_plot[4], label=data[i][0][4])
+#                    ax2.plot(data[i][1], to_plot[5], label=data[i][0][5]) 
+#                    ax2.plot(data[i][1], to_plot[6], label=data[i][0][6])
+#                    ax2.plot(data[i][1], to_plot[7], label=data[i][0][7])
+#                    ax2.plot(data[i][1], to_plot[8], label=data[i][0][8])
+#                    ax2.plot(data[i][1], to_plot[9], label=data[i][0][9])
+#                    ax2.plot(data[i][1], to_plot[10], label=data[i][0][10])
+#                
                 ax2.tick_params(labelrotation=-90)
                 ax2.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')               
                 # plt.show()            
                 # plt.ioff()
                 # 
-                # plt.close(fig)
-                plt.savefig('figures/'+stations[i]+' '+labl+".png", bbox_inches='tight')
+                # plt.close(fig) 
+                # plt.savefig('figures/'+stations[i]+' '+labl+".png", bbox_inches='tight')
+                plt.savefig('figures/'+stations[i]+'('+companies[i]+') '+labl+".png", bbox_inches='tight')
                 plt.close(fig)
             except:  
                 print("**********************") 
                 print('printing error ')   
                 print("**********************")
                 print(stations[i])
-                print(data[0][1])
+                print(data[i][1])
                 print(to_plot)
                 print(data[i][0])
                 pass
@@ -591,7 +658,7 @@ class Simulation ( ):
                  
             infoTraining.prints( )   
              
-            self.graphs(self.onRentData, 'T ' +feini.strftime(self.formato)+ ' '+ fefin.strftime(self.formato), self.parameters["stations"])   
+            self.graphs(self.onRentData, 'T ' +feini.strftime(self.formato)+ ' '+ fefin.strftime(self.formato), self.parameters["stations"], self.companies)   
             
             
             # ---------------------------------------------
@@ -801,7 +868,7 @@ class Simulation ( ):
                     sys.exit()
                     
                 infoNextweek.prints(sol)  
-                self.graphs(self.onRentData, 'T ' +fpini.strftime(self.formato)+ ' '+ fpfin.strftime(self.formato), self.parameters["stations"])   
+                self.graphs(self.onRentData, 'T ' +fpini.strftime(self.formato)+ ' '+ fpfin.strftime(self.formato), self.parameters["stations"], self.companies)   
                 
                     
                 fpinix = fpini 
