@@ -7,27 +7,31 @@ Created on Mon Mar  8 13:57:05 2021
 """
 
 class Vehiculo(object):  
-    def __init__(self, mva, tipo):
+	
+    def __init__(self, uid, tipo):
         self.tipo = tipo
-        self.mva = mva  
+        self.uid = uid  
         self.fecha = []
         self.status = []
         self.active = True
+        
+        
         
     def add(self, fecha, status):
          self.fecha.append(fecha)
          self.status.append(status)
          
          
+         
     def prints(self):
-        print(self.mva, ' ', self.tipo)    
+        print(self.uid, ' ', self.tipo)    
         for j in range(len(self.fecha)):  
             print(self.fecha[j], self.status[j])  
           
             
             
     def prints2(self):
-        print(self.mva, ' ', self.tipo)    
+        print(self.uid, ' ', self.tipo)    
         for j in range(len(self.fecha)):  
             print(self.fecha[j], self.status[j], end=' ')    
         print()    
@@ -50,7 +54,7 @@ class Vehiculo(object):
      
      
     def genmva(self):
-        return self.mva       
+        return self.uid       
      
      
         
@@ -84,7 +88,7 @@ class Vehiculo(object):
         else :
             cc.append(cons)   
             
-#        print(self.mva, ' ', cont, ' ', cc)     
+#        print(self.uid, ' ', cont, ' ', cc)     
         
         info.append(cont)          
         info.append(max(cc))  

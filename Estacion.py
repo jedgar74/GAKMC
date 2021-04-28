@@ -10,7 +10,7 @@ import statistics
 
 
 class Estacion(object):   
-    def __init__(self, name, nv =0):
+    def __init__(self, name, nv=0):
         self.nv = nv
         self.name = name 
         self.empresa = 0
@@ -20,12 +20,15 @@ class Estacion(object):
         self.f = []
         self.ninactive = 0
         
-        
-    def add(self, mva, tipo,  fec, stat):
-         vv = Vehiculo(mva, tipo)
+    
+    
+    # El parámetro uid corresponde a un identificador único para el vehículo 
+    # qué podría ser el chasis o el MVA    
+    def add(self, uid, tipo, fec, stat):
+         vv = Vehiculo(uid, tipo)
          vv.add(fec, stat)
          self.v.append(vv)     
-         self.mvaveh.append(mva)   
+         self.mvaveh.append(uid)   
          self.nv = self.nv+1 
          try:
             if self.f.index(fec) == -1:
@@ -35,11 +38,11 @@ class Estacion(object):
          
             
             
-    def add2(self, mva, idv, tipo,  fec, stat):
-         vv = Vehiculo(mva, tipo)
+    def add2(self, uid, idv, tipo,  fec, stat):
+         vv = Vehiculo(uid, tipo)
          vv.add(fec, stat)
          self.v.append(vv)        
-         self.mvaveh.append(mva) 
+         self.mvaveh.append(uid) 
          self.id_veh.append(idv)   
          self.nv = self.nv+1 
          try:
@@ -50,8 +53,8 @@ class Estacion(object):
             
             
             
-    def addD(self, mva,  fec, stat):
-         idv = self.mvaveh.index(mva)
+    def addD(self, uid,  fec, stat):
+         idv = self.mvaveh.index(uid)
          self.v[idv].add(fec, stat)  
          try:
             if self.f.index(fec) == -1:
@@ -59,10 +62,11 @@ class Estacion(object):
          except:
             self.f.append(fec)
      
+     
         
-    def gets(self, mva):
+    def gets(self, uid):
         try:
-            if self.mvaveh.index(mva) != -1:
+            if self.mvaveh.index(uid) != -1:
                 return True
             else :    
                 return False 
@@ -70,31 +74,34 @@ class Estacion(object):
             return False    
         
         
-    def compare(self, mva, fecha, stat):
+        
+    def compare(self, uid, fecha, stat):
         try:
-            idv = self.mvaveh.index(mva) 
+            idv = self.mvaveh.index(uid) 
             if idv != -1:  
                 self.v[idv].setstatus(fecha, stat)
             else :    
-                # print('NO LIST: ', mva)
+                # print('NO LIST: ', uid)
                 pass
         except:
-            # print('NO LIST: ', mva)
+            # print('NO LIST: ', uid)
             pass
+            
         
 
-    def compare2(self, mva, fecha, stat):
+    def compare2(self, uid, fecha, stat):
         try:
-            idv = self.mvaveh.index(mva) 
+            idv = self.mvaveh.index(uid) 
             if idv != -1:  
                 self.v[idv].setstatus2(fecha, stat)
             else :    
-                # print('NO LIST: ', mva)
+                # print('NO LIST: ', uid)
                 pass
         except:
-            # print('NO LIST: ', mva)
+            # print('NO LIST: ', uid)
             pass
 
+        
         
     def prints(self):
         print('Nombre de estación  ', self.name)
@@ -103,12 +110,14 @@ class Estacion(object):
             self.v[j].prints()    
             
             
+            
     def prints2(self):
         print('Nombre de estación  ', self.name)
         print('Número de vehículos ', len(self.mvaveh))        
         for j in range(len(self.mvaveh)):  
             self.v[j].prints2() 
 
+            
             
     def indtip(self):
         print("   ") 
@@ -135,6 +144,7 @@ class Estacion(object):
                 
         print(self.tip, '\n', self.ntip)           
         return [self.tip, self.ntip]
+        
         
         
     def indtipc(self):
@@ -236,6 +246,7 @@ class Estacion(object):
         print(len(self.f), '\n', vtotd, '\n', vmaxd, '\n', vmind, '\n', vprod, '\n', vintd) 
         return [len(self.f), vtotd, vmaxd, vmind, vprod, vintd]               
              
+             
            
     # Verificar si un auto figura como fuera de servicio robado o extraviado
     def verveh(self, veh, cond= ['Missing', 'Stolen'] ): 
@@ -247,7 +258,7 @@ class Estacion(object):
                     a  = a + 1
         if (a/len(veh.fecha)) > 0.8:     
             auto = 1
-            print( '*** 1', veh.mva) 
+            print( '*** 1', veh.uid) 
         return auto
     
     

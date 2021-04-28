@@ -41,6 +41,7 @@ class Simulation ( ):
             self.parameters = {"stations": stations,  "company": company, "nsimulations": nsimulations, "weekstraining": weekstraining,   "finitest": finitest, "ffintest": ffintest,  "fileconfigGA": fileconfigGA,  "evalsGA": evalsGA,  "expGA": expGA,  "prints": False }
   
     
+    
     def setprints(self, prints):   
         self.parameters["prints" ] = prints 
         
@@ -114,8 +115,7 @@ class Simulation ( ):
             print('************************************') 
             print("The requested company was not found, i.e.,", companyd)
             print('************************************\n')
-            sys.exit()
-            
+            sys.exit() 
             
         tmpstations = []  
         for t in range(len(stationsd)): 
@@ -140,8 +140,7 @@ class Simulation ( ):
     def setCompCase(self, companyd): 
         
         # consultamos en la base de datos estación, empresa y cliente
-        self.readStation2() 
-        
+        self.readStation2()  
         
         # Verificamos primero el nombre de la empresa
         tmp = True
@@ -275,7 +274,8 @@ class Simulation ( ):
         
         
     def readVehReg(self):         
-        query = self.db.query("SELECT mva, clase, fecha_compra, km, id_modelo, id_categoria, anho, estatico, asignado, prestamo, contratado, cliente_prestamo, asignacion_estacion, alquilado, sin_movimiento, contrato_abierto, id_estacion, nombre, id_empresa FROM km100.vehiculo v JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion ") 
+        #* query = self.db.query("SELECT mva, clase, fecha_compra, km, id_modelo, id_categoria, anho, estatico, asignado, prestamo, contratado, cliente_prestamo, asignacion_estacion, alquilado, sin_movimiento, contrato_abierto, id_estacion, nombre, id_empresa FROM km100.vehiculo v JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion ") 
+        query = self.db.query("SELECT chasis, clase, fecha_compra, km, id_modelo, id_categoria, anho, estatico, asignado, prestamo, contratado, cliente_prestamo, asignacion_estacion, alquilado, sin_movimiento, contrato_abierto, id_estacion, nombre, id_empresa FROM km100.vehiculo v JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion ") 
 
         infovehist = []
         
@@ -292,7 +292,8 @@ class Simulation ( ):
         # print(self.cat)
         for j in range(len(self.estacion)): 
             # nam = "SELECT mva, clase, nombre FROM km100.vehiculo v JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion WHERE nombre = %s" 
-            nam = "SELECT mva, clase, e.nombre , em.nombre   FROM km100.vehiculo v  JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s" 
+            #* nam = "SELECT mva, clase, e.nombre , em.nombre   FROM km100.vehiculo v  JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s" 
+            nam = "SELECT chasis, clase, e.nombre , em.nombre   FROM km100.vehiculo v  JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s" 
             query = self.db.query(nam, (self.estacion[j], self.empresa[j])) 
          
             cattmp = np.zeros(len(self.cat))
@@ -621,7 +622,8 @@ class Simulation ( ):
                 
                 # obtenemos Los indicadores de cada estación por grupo a partir de la
                 # Data histórica
-                nam = "SELECT kmbi.flota_historica_proveedor.mva, v.id  , descripcion_estado, fecha , clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.mva= kmbi.flota_historica_proveedor.mva JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
+                #* nam = "SELECT kmbi.flota_historica_proveedor.mva, v.id  , descripcion_estado, fecha , clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.mva= kmbi.flota_historica_proveedor.mva JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
+                nam = "SELECT kmbi.flota_historica_proveedor.chasis, v.id  , descripcion_estado, fecha , clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.chasis= kmbi.flota_historica_proveedor.chasis JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
                 query = self.db.query(nam, (self.parameters["stations"][w], self.companies[w], feini.strftime(self.formato), fefin.strftime(self.formato), )) 
                 print('---1---', self.parameters["stations"][w]+'('+self.companies[w]+')', feini.strftime(self.formato)) 
                 
@@ -635,7 +637,7 @@ class Simulation ( ):
                     #  print(t)  
                     #  print('---2---', t[0], t[1], t[4], t[3], t[2]) 
                     if es.gets(t[0]):
-                        # t[0] mva
+                        # t[0] chasis
                         # t[3] fecha
                         # t[2] estado
                         if t[2] == None: 
@@ -648,7 +650,8 @@ class Simulation ( ):
                     his.append(t)    
                       
                         
-                nam2 = "SELECT v.mva, fh.bandera_renta, fh.nombre_estado, fh.fecha FROM km100.vehiculo v JOIN kmbi.flota_historica fh on v.id = fh.id_vehiculo JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND  fh.fecha BETWEEN %s AND %s"
+                #* nam2 = "SELECT v.mva, fh.bandera_renta, fh.nombre_estado, fh.fecha FROM km100.vehiculo v JOIN kmbi.flota_historica fh on v.id = fh.id_vehiculo JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND  fh.fecha BETWEEN %s AND %s"
+                nam2 = "SELECT v.chasis, fh.bandera_renta, fh.nombre_estado, fh.fecha FROM km100.vehiculo v JOIN kmbi.flota_historica fh on v.id = fh.id_vehiculo JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND  fh.fecha BETWEEN %s AND %s"
                 query2 = db2.query(nam2, (self.parameters["stations"][w], self.companies[w], feini.strftime(self.formato), fefin.strftime(self.formato), )) 
                
         
@@ -769,7 +772,8 @@ class Simulation ( ):
             infoStations = []
             print('\n\n---Lastweek---', (fpini - timedelta(days=7)).strftime(self.formato), (fpfin - timedelta(days=7)).strftime(self.formato))    
             for w in range(len(self.parameters["stations"])): 
-                nam = "SELECT kmbi.flota_historica_proveedor.mva, v.id, descripcion_estado, fecha, clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.mva= kmbi.flota_historica_proveedor.mva JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
+                #* nam = "SELECT kmbi.flota_historica_proveedor.mva, v.id, descripcion_estado, fecha, clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.mva= kmbi.flota_historica_proveedor.mva JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
+                nam = "SELECT kmbi.flota_historica_proveedor.chasis, v.id, descripcion_estado, fecha, clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.chasis= kmbi.flota_historica_proveedor.chasis JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
                 # print(nam, self.parameters["stations"][w], self.companies[w], (fpini - timedelta(days=7)).strftime(self.formato), (fpfin - timedelta(days=7)).strftime(self.formato))
                 query = self.db.query(nam, (self.parameters["stations"][w], self.companies[w], (fpini - timedelta(days=7)).strftime(self.formato), (fpfin - timedelta(days=7)).strftime(self.formato), )) 
                 
@@ -789,7 +793,8 @@ class Simulation ( ):
                     his.append(t)     
                     
                         
-                nam2 = "SELECT  v.mva, fh.bandera_renta, fh.nombre_estado, fh.fecha FROM km100.vehiculo v JOIN kmbi.flota_historica fh on v.id = fh.id_vehiculo JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND  fh.fecha BETWEEN %s AND %s"
+                #* nam2 = "SELECT  v.mva, fh.bandera_renta, fh.nombre_estado, fh.fecha FROM km100.vehiculo v JOIN kmbi.flota_historica fh on v.id = fh.id_vehiculo JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND  fh.fecha BETWEEN %s AND %s"
+                nam2 = "SELECT  v.chasis, fh.bandera_renta, fh.nombre_estado, fh.fecha FROM km100.vehiculo v JOIN kmbi.flota_historica fh on v.id = fh.id_vehiculo JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND  fh.fecha BETWEEN %s AND %s"
                 query2 = db2.query(nam2, (self.parameters["stations"][w], self.companies[w], (fpini - timedelta(days=7)).strftime(self.formato), (fpfin - timedelta(days=7)).strftime(self.formato), )) 
                  
         
@@ -846,7 +851,8 @@ class Simulation ( ):
                 
                 
                 for w in range(len(self.parameters["stations"])): 
-                    nam = "SELECT kmbi.flota_historica_proveedor.mva, v.id  , descripcion_estado, fecha , clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.mva= kmbi.flota_historica_proveedor.mva JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
+                    #*nam = "SELECT kmbi.flota_historica_proveedor.mva, v.id  , descripcion_estado, fecha , clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.mva= kmbi.flota_historica_proveedor.mva JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
+                    nam = "SELECT kmbi.flota_historica_proveedor.chasis, v.id  , descripcion_estado, fecha , clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.chasis= kmbi.flota_historica_proveedor.chasis JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
                     query = self.db.query(nam, (self.parameters["stations"][w], self.companies[w], fpini.strftime(self.formato), fpfin.strftime(self.formato), )) 
                    
                     es = Estacion(self.parameters["stations"][w]+'('+self.companies[w]+')')
@@ -865,7 +871,8 @@ class Simulation ( ):
                         his.append(t)     
                         
                             
-                    nam2 = "SELECT  v.mva, fh.bandera_renta, fh.nombre_estado, fh.fecha FROM km100.vehiculo v JOIN kmbi.flota_historica fh on v.id = fh.id_vehiculo JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND  fh.fecha BETWEEN %s AND %s"
+                    #* nam2 = "SELECT  v.mva, fh.bandera_renta, fh.nombre_estado, fh.fecha FROM km100.vehiculo v JOIN kmbi.flota_historica fh on v.id = fh.id_vehiculo JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND  fh.fecha BETWEEN %s AND %s"
+                    nam2 = "SELECT  v.chasis, fh.bandera_renta, fh.nombre_estado, fh.fecha FROM km100.vehiculo v JOIN kmbi.flota_historica fh on v.id = fh.id_vehiculo JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND  fh.fecha BETWEEN %s AND %s"
                     query2 = db2.query(nam2, (self.parameters["stations"][w], self.companies[w], fpini.strftime(self.formato), fpfin.strftime(self.formato), )) 
                      
             
