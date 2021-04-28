@@ -382,14 +382,22 @@ class Projection ( ):
                 # plt.show()            
                 # plt.ioff()
                 
-                # Define la posibilidad de imprimir en línea las gráficas
-                if self.parameters["stations"]: 
-                    pass
                 
+                fig.set_size_inches(18.5*0.8, 10.5*0.8)
+                ax2.set_title(' '+stations[i]+'('+companies[i]+')')
+                # axs.set_title(stations[i]+'('+companies[i]+')', loc = "left", fontdict = {'fontsize':14, 'fontweight':'bold', 'color':'tab:blue'})
                 # plt.close(fig) 
                 # plt.savefig('figures/'+stations[i]+' '+labl+".png", bbox_inches='tight')
                 plt.savefig('figures/'+stations[i]+'('+companies[i]+') '+labl+".png", bbox_inches='tight')
+                
+                # Define la posibilidad de imprimir en línea las gráficas
+                # print(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,", self.parameters["prints"])
+                if self.parameters["prints"] == True: 
+                    # print(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,")
+                    plt.show()
+                
                 plt.close(fig)
+                
             except:  
                 print("**********************") 
                 print('printing error ')   

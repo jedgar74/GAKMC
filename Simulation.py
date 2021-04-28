@@ -557,13 +557,17 @@ class Simulation ( ):
                 # plt.show()            
                 # plt.ioff()
                 
-                # Define la posibilidad de imprimir en línea las gráficas
-                if self.parameters["stations"]: 
-                    pass
+                fig.set_size_inches(18.5*0.8, 10.5*0.8)
+                ax2.set_title(' '+stations[i]+'('+companies[i]+')')
                 
                 # plt.close(fig) 
                 # plt.savefig('figures/'+stations[i]+' '+labl+".png", bbox_inches='tight')
                 plt.savefig('figures/'+stations[i]+'('+companies[i]+') '+labl+".png", bbox_inches='tight')
+                
+                # Define la posibilidad de imprimir en línea las gráficas
+#                if self.parameters["prints"] == True: 
+#                    plt.show()
+                
                 plt.close(fig)
             except:  
                 print("**********************") 
