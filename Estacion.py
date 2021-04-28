@@ -82,6 +82,19 @@ class Estacion(object):
             # print('NO LIST: ', mva)
             pass
         
+
+    def compare2(self, mva, fecha, stat):
+        try:
+            idv = self.mvaveh.index(mva) 
+            if idv != -1:  
+                self.v[idv].setstatus2(fecha, stat)
+            else :    
+                # print('NO LIST: ', mva)
+                pass
+        except:
+            # print('NO LIST: ', mva)
+            pass
+
         
     def prints(self):
         print('Nombre de estación  ', self.name)

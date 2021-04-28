@@ -38,9 +38,13 @@ class Simulation ( ):
             fileconfigGA = "GARF2" 
             evalsGA = 5000 
             expGA = 10 
-            self.parameters = {"stations": stations,  "company": company, "nsimulations": nsimulations, "weekstraining": weekstraining,   "finitest": finitest, "ffintest": ffintest,  "fileconfigGA": fileconfigGA,  "evalsGA": evalsGA,  "expGA": expGA,  "printFile": False }
+            self.parameters = {"stations": stations,  "company": company, "nsimulations": nsimulations, "weekstraining": weekstraining,   "finitest": finitest, "ffintest": ffintest,  "fileconfigGA": fileconfigGA,  "evalsGA": evalsGA,  "expGA": expGA,  "prints": False }
   
     
+    def setprints(self, prints):   
+        self.parameters["prints" ] = prints 
+        
+
     
     def setevalsGA(self, evalsGA):   
         self.parameters["evalsGA" ] = evalsGA 
@@ -313,26 +317,43 @@ class Simulation ( ):
         flagOnRent = flag
         kmCFleet = statusX
         
-        if flagOnRent == 1 : 
-            if kmCFleet == 'Taller' or kmCFleet == 'Operativo' :
-                status = 'On Rent'
-            else : 
-                status = 'On Rent'   
-        else :  
-            if kmCFleet == 'Operativo' :
-                status = 'AVAILABLE'
-            elif kmCFleet == 'Taller' :
-                status = 'In Maintenance' 
-            # --- Revisar    
-            elif kmCFleet == 'Salvamento' :
-                status = 'AVAILABLE'              
-            else : 
-                # --- incluye Remarketing
-                status = 'UNAVAILABLE'  
+        # Se toman como válidas las entradas de renta de alquiler 
+        # solamente lo proveniente del proveedor. Las demás banderas 
+        # se varían con respecto a flota histórica local
+         
+        if kmCFleet == 'Operativo' :
+            status = 'AVAILABLE'
+        elif kmCFleet == 'Taller' :
+            status = 'In Maintenance' 
+        # --- Revisar    
+        elif kmCFleet == 'Salvamento' :
+            status = 'UNAVAILABLE'              
+        else : 
+            # --- incluye Remarketing
+            status = 'UNAVAILABLE'        
+        
+        
+#        if flagOnRent == 1 : 
+#            if kmCFleet == 'Taller' or kmCFleet == 'Operativo' :
+#                status = 'On Rent'
+#            else : 
+#                status = 'On Rent'   
+#        else :  
+#            if kmCFleet == 'Operativo' :
+#                status = 'AVAILABLE'
+#            elif kmCFleet == 'Taller' :
+#                status = 'In Maintenance' 
+#            # --- Revisar    
+#            elif kmCFleet == 'Salvamento' :
+#                status = 'UNAVAILABLE'              
+#            else : 
+#                # --- incluye Remarketing
+#                status = 'UNAVAILABLE'  
         # print('---4---', prov, ';', flag, ';', statusX, ';', status)        
                      
         return status 
     
+
 
     def emptydata(self, data):
         rdata = data 
@@ -352,10 +373,10 @@ class Simulation ( ):
         empty = False
        
         if len(data[0]) == 0 and len(data[1]) == 0 and len(data[2]) == 0:
-            empty = True 
-        
+            empty = True  
             
         return empty 
+
 
 
     def sortfordate(self, fecha, valores): 
@@ -534,7 +555,11 @@ class Simulation ( ):
                 ax2.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')               
                 # plt.show()            
                 # plt.ioff()
-                # 
+                
+                # Define la posibilidad de imprimir en línea las gráficas
+                if self.parameters["stations"]: 
+                    pass
+                
                 # plt.close(fig) 
                 # plt.savefig('figures/'+stations[i]+' '+labl+".png", bbox_inches='tight')
                 plt.savefig('figures/'+stations[i]+'('+companies[i]+') '+labl+".png", bbox_inches='tight')
@@ -610,7 +635,14 @@ class Simulation ( ):
                     #  print(t)  
                     #  print('---2---', t[0], t[1], t[4], t[3], t[2]) 
                     if es.gets(t[0]):
-                        es.addD(t[0], t[3], t[2].strip(" ")) 
+                        # t[0] mva
+                        # t[3] fecha
+                        # t[2] estado
+                        if t[2] == None: 
+                            print(t[0], t[3], 'UNKNOWN')
+                            es.addD(t[0], t[3], 'UNKNOWN')
+                        else:    
+                            es.addD(t[0], t[3], t[2].strip(" ")) 
                     else :        
                         es.add2(t[0], t[1], t[4], t[3], t[2].strip(" ")) 
                     his.append(t)    
@@ -624,7 +656,7 @@ class Simulation ( ):
                     # print(tv)  
                     # print('---3---', tv[0], tv[1], tv[3], tv[2]) 
                     mkstatus = self.makedecision(" ", tv[1], tv[2]) 
-                    es.compare(tv[0], tv[3], mkstatus) 
+                    es.compare2(tv[0], tv[3], mkstatus) 
                          
                         
                 # es.prints2()  
@@ -765,7 +797,7 @@ class Simulation ( ):
                     # print(tv)  
                     # print('---3---', tv[0], tv[1], tv[3], tv[2]) 
                     mkstatus = self.makedecision( " ", tv[1], tv[2]) 
-                    es.compare(tv[0], tv[3], mkstatus)   
+                    es.compare2(tv[0], tv[3], mkstatus)   
             
                     # print("---")    
                     # print("---")    
@@ -841,7 +873,7 @@ class Simulation ( ):
                         # print(tv)  
                         # print('---3---', tv[0], tv[1], tv[3], tv[2]) 
                         mkstatus = self.makedecision( " ", tv[1], tv[2]) 
-                        es.compare(tv[0], tv[3], mkstatus)  
+                        es.compare2(tv[0], tv[3], mkstatus)  
               
                         # print("---")    
                         # print("---")    
@@ -879,16 +911,18 @@ class Simulation ( ):
                     fpinix = fpini + timedelta(days=ie) 
                     ie = ie + 1
                     
-                    
-                valorf = np.array(infoLastweek.TYPES) + np.array(sol)            
+                if len(sol[0]) != len(infoLastweek.TYPES[0]):
+                    valorf = self.vadapt(sol, infoLastweek, infoTraining)  
+                else :
+                    valorf = np.array(infoLastweek.TYPES) + np.array(sol)            
                 print('********* :', sol,  infoLastweek.TYPES, infoNextweek.typesOfVehicles, valorf, fe )    
                 print('********* :', es.ver(infoNextweek.typesOfVehicles, valorf, fe ) )
               
-                self.analysis(forecast, feini, fefin, fpini, fpfin, sol, infoLastweek.typesOfVehicles,  infoLastweek.OPFLMAXIMA,  infoNextweek.OPFLMAXIMA,  infoNextweek.MAXIMA,  infoNextweek.MANMAXIMA,  infoNextweek.MANMEDIA, infoStations) 
+                self.analysis(forecast, feini, fefin, fpini, fpfin, sol, infoLastweek.typesOfVehicles,  infoLastweek.OPFLMAXIMA, infoTraining,  infoNextweek.OPFLMAXIMA,  infoNextweek.MAXIMA,  infoNextweek.MANMAXIMA,  infoNextweek.MANMEDIA, infoStations) 
 
             else :
 				
-                self.analysis(forecast, feini, fefin, fpini, fpfin, sol, infoLastweek.typesOfVehicles,  infoLastweek.OPFLMAXIMA) 
+                self.analysis(forecast, feini, fefin, fpini, fpfin, sol, infoLastweek.typesOfVehicles,  infoLastweek.OPFLMAXIMA, infoTraining) 
 
             # ------------
             # actualizar fechas
@@ -897,23 +931,67 @@ class Simulation ( ):
             fefin = fefin + timedelta(days=7)
 
         
+      
+    def vadapt (self, sol, infoLastweek, infoTraining):
+        valorf = np.array(infoLastweek.TYPES)
+        valors = np.array(sol)  
+        # print('+2++', valorf) 
+        # print('+2++', valors) 
+        
+        
+        # print('+3++', infoLastweek.TYPES,  infoLastweek.typesOfVehicles)  
+        # print('+3++', sol, infoTraining.TYPES,  infoTraining.typesOfVehicles)  
+        
+        for t in range(len(valors[0])):
+            for j in range(len(valorf[0])):
+                if infoLastweek.typesOfVehicles[j] == infoTraining.typesOfVehicles[t]:
+                    valors[0][t] = valors[0][t] +valorf[0][j]
+                    break
+                
+        # print('+4++', valors)          
+        
+        return valorf
+    
+    
+        
        
-       
-    def analysis (self, flagfor, feini, fefin, fpini, fpfin, sol, typesvh, lastw, forew=None, MAXIMA=None, MANMAX=None, MANMEDIA=None, infoStations=None):   
+    def analysis (self, flagfor, feini, fefin, fpini, fpfin, sol, typesvh, lastw, infoTraining, forew=None, MAXIMA=None, MANMAX=None, MANMEDIA=None, infoStations=None):   
         print('\n\n')
         
         print('****** analysis period ****** :', feini.strftime(self.formato), fefin.strftime(self.formato))    
         print('')
         forecast = [] 
         
-        for f in range(len(sol)):  
-            cforecast = [] 
-            for v in range(len(sol[f])):  
-                cforecast.append(int(lastw[f][v]) + int(sol[f][v]))
-            forecast.append(cforecast)    
-            
-            
+        
+        # print('----', sol)
+        # print('----', typesvh)    
+        # print('----', lastw)  
+        # print('----', infoTraining.typesOfVehicles) 
+        
+        
+        if len(sol[0]) != len(typesvh):
+            for f in range(len(sol)):  
+                cforecast = [] 
+                for v in range(len(sol[f])):  
+                    for d in range(len(typesvh)): 
+                        if typesvh[d] == infoTraining.typesOfVehicles[v]:
+                            cforecast.append(int(lastw[f][d]) + int(sol[f][v]))
+                forecast.append(cforecast)    
+        else :   
+            # print('-e--', sol)
+            for f in range(len(sol)):  
+                cforecast = [] 
+                for v in range(len(sol[f])):  
+                    cforecast.append(int(lastw[f][v]) + int(sol[f][v]))
+                forecast.append(cforecast) 
+#            pass
+#        for f in range(len(sol)):  
+#                cforecast = [] 
+#                for v in range(len(sol[f])):  
+#                    cforecast.append(int(lastw[f][v]) + int(sol[f][v]))
+#                forecast.append(cforecast)     
         # self.graphs(self.onRentData) 
+        # print('----', forecast)
         
             
         print('******    proposal     ****** :', '\n', typesvh, '\n')

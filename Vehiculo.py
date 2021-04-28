@@ -23,6 +23,7 @@ class Vehiculo(object):
         print(self.mva, ' ', self.tipo)    
         for j in range(len(self.fecha)):  
             print(self.fecha[j], self.status[j])  
+          
             
             
     def prints2(self):
@@ -31,14 +32,26 @@ class Vehiculo(object):
             print(self.fecha[j], self.status[j], end=' ')    
         print()    
             
+            
+            
     def setstatus(self, fecv, status): 
         iff = self.fecha.index(fecv) 
         if iff != -1: 
             self.status[iff] = status 
+           
+           
             
+    def setstatus2(self, fecv, status): 
+        iff = self.fecha.index(fecv) 
+        if iff != -1:
+            if self.status[iff] != 'On Rent':
+                self.status[iff] = status             
+            
+     
      
     def genmva(self):
         return self.mva       
+     
      
         
     def contipos(self, tipos):
