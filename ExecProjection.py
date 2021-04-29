@@ -7,20 +7,20 @@ Created on Wed Apr 28 10:16:51 2021
 """
 
 
-from Projection import *
+from HistoricalProjection import *
 
 # ...............................
 # ejecutar la simulación
 # ...............................
 
-simulation = Projection()
-#simulation = Simulation(parameters)
+historicalProj = HistoricalProjection()
+#historicalProj = Simulation(parameters)
 
-simulation.setfinitest([2020, 1, 1])
-simulation.setffintest([2020, 1, 7]) 
-simulation.setweekstraining(52)
-simulation.setprints(True)
-#simulation.setCompCase(["Nelly"])
-simulation.setCompStatCase(["Nelly"], ["Independencia" ]) 
-print(simulation.parameters)
-simulation.run()
+historicalProj.setfinitest([2020, 1, 1])
+historicalProj.setffintest([2020, 1, 7]) 
+historicalProj.setweekstraining(52)
+historicalProj.setprints(True)
+#historicalProj.setCompCase(["Nelly"])
+historicalProj.setCompStatCase(["Nelly"], ["Independencia" ]) 
+print(historicalProj.parameters)
+historicalProj.run()

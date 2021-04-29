@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 import sys
 import matplotlib.pyplot as plt
 
-class Projection ( ): 
+class HistoricalProjection( ): 
     def __init__(self, param=None):  
         self.formato = "%Y-%m-%d"  
         self.db = DBkm100()

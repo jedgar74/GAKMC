@@ -5,20 +5,19 @@ Created on Wed Apr 28 11:02:10 2021
 
 @author: tauger
 """
-from Projection import *
+from HistoricalProjection import *
 import sys
 
 # ...............................
 # ejecutar la simulación
 # ...............................
 
-simulation = Projection()
-#simulation = Simulation(parameters)
+historicalProj = HistoricalProjection() 
 a = int(sys.argv[2]) +1
-simulation.setfinitest([a, 1, 1])
-simulation.setffintest([a, 1, 7]) 
-simulation.setweekstraining(52)
-simulation.setCompCase([sys.argv[1]])
-#simulation.setCompStatCase(["Nelly"], ["Independencia" ]) 
-print(simulation.parameters)
-simulation.run()
+historicalProj.setfinitest([a, 1, 1])
+historicalProj.setffintest([a, 1, 7]) 
+historicalProj.setweekstraining(52)
+historicalProj.setCompCase([sys.argv[1]])
+#historicalProj.setCompStatCase(["Nelly"], ["Independencia" ]) 
+print(historicalProj.parameters)
+historicalProj.run()
