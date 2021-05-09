@@ -18,6 +18,7 @@ class DBkm100(object):
                                   database="km100")
         self.con=self.conexion.cursor(buffered=True)
         
+        
     def query(self, querytxt, parameters=None): 
         q = (querytxt) 
         if parameters == None:
@@ -26,4 +27,28 @@ class DBkm100(object):
             self.con.execute(q, parameters)
             
         return self.con     
+        
+        
+    def insert(self, inserttxt, val, parameters=None): 
+        q = (inserttxt) 
+        if parameters == None:
+            self.con.execute(q, val) 
+        else :        
+            self.con.executemany(q, val)
+            
+        # if len(val)==1:
+        #     self.con.execute(q, val) 
+        # elif len(val)>1:     
+        #     self.con.executemany(q, val)
+            
+        self.conexion.commit()         
+
+
+
+    def nrows(self, parameters=None): 
+        res = self.con.fetchone() 
+        try:
+            return res[0]
+        except : 
+            return 0   
             

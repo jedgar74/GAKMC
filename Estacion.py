@@ -10,8 +10,9 @@ import statistics
 
 
 class Estacion(object):   
-    def __init__(self, name, nv=0):
+    def __init__(self, name, id_est=None, nv=0):
         self.nv = nv
+        self.id_est = id_est
         self.name = name 
         self.empresa = 0
         self.v = []

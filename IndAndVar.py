@@ -111,6 +111,7 @@ class IndAndVar(object):
             self.NumeroDias = infoStations[0][6][0]
         
         
+        
     def prints(self, sol=None):   
         print("---")   
         print('DATES     :', self.finit, self.ffins)

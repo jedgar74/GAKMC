@@ -7,7 +7,7 @@ Created on Tue Apr  6 18:14:48 2021
 """
 
 import json 
-from Simulation import *
+from Total import *
 
 
 def readParameters( nameFile ): 
@@ -17,6 +17,7 @@ def readParameters( nameFile ):
         data = json.load(file)
 		 
     return  data 
+
 
 
 # ...............................
@@ -33,7 +34,7 @@ parameters = readParameters(namefile)
 # ...............................
 
 # simulation = Simulation()
-simulation = Simulation(parameters)
+simulation = Total(parameters)
 # simulation.setcompany(["Budget"])
 # simulation.setstations(["Santo Domingo","Santiago"])
 simulation.setexpGA(1)    

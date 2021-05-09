@@ -22,7 +22,7 @@ class Cliente(object):
             addemp = True
             for t in range(len(self.empresas)):
                 if self.empresas[t].name == empresa.name: 
-                    self.empresas[t].addEstacion(empresa.estaciones[0])
+                    self.empresas[t].addEstacion(empresa.estaciones[0], empresa.idestaciones[0], empresa.gpsestaciones[0])
                     addemp = False
                     break 
             if addemp:

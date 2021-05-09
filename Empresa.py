@@ -14,18 +14,25 @@ class Empresa(object):
     def __init__(self, name): 
         self.name = name  
         self.estaciones = []
+        self.idestaciones = []
+        self.gpsestaciones = []
         
         
-        
-    def addEstacion(self, estacion):    
+    def addEstacion(self, estacion, idestaciones=None, gpsestaciones=None):    
         if len(self.estaciones) == 0: 
             self.estaciones.append(estacion)
+            self.idestaciones.append(idestaciones)
+            self.gpsestaciones.append(gpsestaciones)
         else :
             try:
                 if  self.estaciones.index(estacion) == -1: 
                     self.estaciones.append(estacion)
+                    self.idestaciones.append(idestaciones)
+                    self.gpsestaciones.append(gpsestaciones)
             except:    
                 self.estaciones.append(estacion)
+                self.idestaciones.append(idestaciones)
+                self.gpsestaciones.append(gpsestaciones)
                 
                 
     def getEstaciones(self):     
@@ -40,5 +47,17 @@ class Empresa(object):
     
     def getEstacion(self, i):     
         return self.estaciones[i]
+    
+    
+    
+    def getIDEstacion(self, i):     
+        return self.idestaciones[i]        
+    
+    
+    
+    def getGPSEstacion(self, i):     
+        return self.gpsestaciones[i]        
+                
+        
        
     
