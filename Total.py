@@ -527,8 +527,8 @@ class Total ( ):
         ### print("-------addForecastdb--------- ", sol)
         for w in range(len(sol)): 
             # Verificamos si la Data existe, si no existe se llama al método genData
-            # nam = "SELECT clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd  FROM kmbi.onefleet_inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
-            nam = "SELECT COUNT(*) id_estacion FROM kmbi.onefleet_forecast i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
+            # nam = "SELECT clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd  FROM onefleet.inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
+            nam = "SELECT COUNT(*) id_estacion FROM onefleet.forecast i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
             query = self.db.query(nam, (self.getidest(self.parameters["stations"][w], self.companies[w]), fini.strftime(self.formato), ffin.strftime(self.formato), )) 
             i=self.db.nrows()  
             
@@ -546,7 +546,7 @@ class Total ( ):
                     
                     tmp.append(his)  
                 ### print('-----+++++--', tmp)    
-                sql = "INSERT INTO kmbi.onefleet_forecast (parametros, fecha_inicio, fecha_final, id_estacion, clase, nveh)  VALUES (%s, %s, %s,  %s, %s, %s)"
+                sql = "INSERT INTO onefleet.forecast (parametros, fecha_inicio, fecha_final, id_estacion, clase, nveh)  VALUES (%s, %s, %s,  %s, %s, %s)"
              
                 if  len(tmp) == 1: 
                     self.db.insert(sql, tmp ) 
@@ -564,14 +564,14 @@ class Total ( ):
         ### print("-------addParamdb--------- ", w)
         
         # Verificamos si la Data existe, si no existe se llama al método genData
-        nam = "SELECT COUNT(*) id FROM kmbi.onefleet_parameters i  WHERE i.w1=%s AND i.w2=%s AND i.w3=%s AND i.w4=%s AND i.w5=%s AND i.w6=%s AND i.dp=%s AND i.r=%s AND i.pc=%s AND i.pm=%s AND i.ne=%s"
+        nam = "SELECT COUNT(*) id FROM onefleet.parameters i  WHERE i.w1=%s AND i.w2=%s AND i.w3=%s AND i.w4=%s AND i.w5=%s AND i.w6=%s AND i.dp=%s AND i.r=%s AND i.pc=%s AND i.pm=%s AND i.ne=%s"
         # query = self.db.query(nam, (w1, w2, w3, w4, w5, w6, dp, r,  pc, pm , ne,  )) 
         query = self.db.query(nam, (w[0], w[1], w[2], w[3], w[4], w[5], w[6], w[7], w[8], w[9], w[10],  )) 
         i = self.db.nrows()  
         ### print("----- ----- ", i)
         
         if i == 0:   
-            sql = "INSERT INTO kmbi.onefleet_parameters (w1, w2, w3, w4, w5, w6, dp, r,  pc, pm , ne)  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            sql = "INSERT INTO onefleet.parameters (w1, w2, w3, w4, w5, w6, dp, r,  pc, pm , ne)  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             self.db.insert(sql, w) 
            
  
@@ -579,7 +579,7 @@ class Total ( ):
     def getParamdb(self, w): 
         ### print("-------getParamdb--------- ", w)
         idp = -1
-        nam = "SELECT id FROM kmbi.onefleet_parameters i WHERE i.w1=%s AND i.w2=%s AND i.w3=%s AND i.w4=%s AND i.w5=%s AND i.w6=%s AND i.dp=%s AND i.r=%s AND i.pc=%s AND i.pm=%s AND i.ne=%s"  
+        nam = "SELECT id FROM onefleet.parameters i WHERE i.w1=%s AND i.w2=%s AND i.w3=%s AND i.w4=%s AND i.w5=%s AND i.w6=%s AND i.dp=%s AND i.r=%s AND i.pc=%s AND i.pm=%s AND i.ne=%s"  
         query = self.db.query(nam, (w[0], w[1], w[2], w[3], w[4], w[5], w[6], w[7], w[8], w[9], w[10])) 
         
         for t in query: 
@@ -620,7 +620,7 @@ class Total ( ):
                             tmp[e].append(",".join(map(str, infoest[t][i][e]))) 
                         
         ### print("\n\n*** ", tmp)     
-        sql = "INSERT INTO kmbi.onefleet_inputdata (id_estacion, fecha_inicio, fecha_final, clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        sql = "INSERT INTO onefleet.inputdata (id_estacion, fecha_inicio, fecha_final, clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
                
         if  len(tmp) == 1: 
             self.db.insert(sql, tmp ) 
@@ -635,8 +635,8 @@ class Total ( ):
         ### print("-------getData--------- ", w)
         
         # Verificamos si la Data existe, si no existe se llama al método genData
-        # nam = "SELECT clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd  FROM kmbi.onefleet_inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
-        nam = "SELECT COUNT(*)  id_estacion FROM kmbi.onefleet_inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
+        # nam = "SELECT clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd  FROM onefleet.inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
+        nam = "SELECT COUNT(*)  id_estacion FROM onefleet.inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
         query = self.db.query(nam, (self.getidest(self.parameters["stations"][w], self.companies[w]), fini.strftime(self.formato), ffin.strftime(self.formato), )) 
         # print('---0---', self.idestacion[w], self.parameters["stations"][w]+'('+self.companies[w]+')', fini.strftime(self.formato)) 
         i=self.db.nrows()  
@@ -655,7 +655,7 @@ class Total ( ):
             infoest = []
             est = Estacion(self.parameters["stations"][w]+'('+self.companies[w]+')', self.getidest(self.parameters["stations"][w], self.companies[w]))
             
-            nam = "SELECT clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd  FROM kmbi.onefleet_inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
+            nam = "SELECT clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd  FROM onefleet.inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
             query = self.db.query(nam, (self.getidest(self.parameters["stations"][w], self.companies[w]), fini.strftime(self.formato), ffin.strftime(self.formato), )) 
         
             nn = []
