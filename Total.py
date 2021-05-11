@@ -24,6 +24,7 @@ class Total ( ):
     def __init__(self, param=None):  
         self.formato = "%Y-%m-%d"  
         self.db = DBkm100()
+        self.dbo = DBkm100("onefleet")
         
         if (not param == None): 
             self.readparam(param) 
@@ -528,9 +529,9 @@ class Total ( ):
         for w in range(len(sol)): 
             # Verificamos si la Data existe, si no existe se llama al método genData
             # nam = "SELECT clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd  FROM onefleet.inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
-            nam = "SELECT COUNT(*) id_estacion FROM onefleet.forecast i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
-            query = self.db.query(nam, (self.getidest(self.parameters["stations"][w], self.companies[w]), fini.strftime(self.formato), ffin.strftime(self.formato), )) 
-            i=self.db.nrows()  
+            nam = "SELECT COUNT(i.id_estacion)  FROM onefleet.forecast i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
+            query = self.dbo.query(nam, (self.getidest(self.parameters["stations"][w], self.companies[w]), fini.strftime(self.formato), ffin.strftime(self.formato), )) 
+            i=self.dbo.nrows()  
             
             if i == 0:  
                 tmp = []
@@ -549,10 +550,10 @@ class Total ( ):
                 sql = "INSERT INTO onefleet.forecast (parametros, fecha_inicio, fecha_final, id_estacion, clase, nveh)  VALUES (%s, %s, %s,  %s, %s, %s)"
              
                 if  len(tmp) == 1: 
-                    self.db.insert(sql, tmp ) 
+                    self.dbo.insert(sql, tmp ) ### self.db.insert(sql, tmp[0])
                 else :  
-                    self.db.insert(sql, tmp, " ")
-                 
+                    self.dbo.insert(sql, tmp, " ")
+               
              
             else : 	
                 ### print('-----Hay datos--') 
@@ -561,29 +562,29 @@ class Total ( ):
 
 
     def addParamdb(self, w): 
-        ### print("-------addParamdb--------- ", w)
-        
+        print("-------addParamdb--------- ", w)
+        self.dbd = DBkm100()
         # Verificamos si la Data existe, si no existe se llama al método genData
-        nam = "SELECT COUNT(*) id FROM onefleet.parameters i  WHERE i.w1=%s AND i.w2=%s AND i.w3=%s AND i.w4=%s AND i.w5=%s AND i.w6=%s AND i.dp=%s AND i.r=%s AND i.pc=%s AND i.pm=%s AND i.ne=%s"
+        nam = "SELECT COUNT(*) FROM onefleet.parameters i WHERE i.w1=%s AND i.w2=%s AND i.w3=%s AND i.w4=%s AND i.w5=%s AND i.w6=%s AND i.dp=%s AND i.r=%s AND i.pc=%s AND i.pm=%s AND i.ne=%s"
         # query = self.db.query(nam, (w1, w2, w3, w4, w5, w6, dp, r,  pc, pm , ne,  )) 
-        query = self.db.query(nam, (w[0], w[1], w[2], w[3], w[4], w[5], w[6], w[7], w[8], w[9], w[10],  )) 
-        i = self.db.nrows()  
+        query = self.dbd.query(nam, (w[0], w[1], w[2], w[3], w[4], w[5], w[6], w[7], w[8], w[9], w[10] )) 
+        i = self.dbd.nrows()  
         ### print("----- ----- ", i)
         
         if i == 0:   
             sql = "INSERT INTO onefleet.parameters (w1, w2, w3, w4, w5, w6, dp, r,  pc, pm , ne)  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            self.db.insert(sql, w) 
+            self.dbd.insert(sql, w) 
            
  
     
     def getParamdb(self, w): 
         ### print("-------getParamdb--------- ", w)
         idp = -1
-        nam = "SELECT id FROM onefleet.parameters i WHERE i.w1=%s AND i.w2=%s AND i.w3=%s AND i.w4=%s AND i.w5=%s AND i.w6=%s AND i.dp=%s AND i.r=%s AND i.pc=%s AND i.pm=%s AND i.ne=%s"  
-        query = self.db.query(nam, (w[0], w[1], w[2], w[3], w[4], w[5], w[6], w[7], w[8], w[9], w[10])) 
+        nam = "SELECT i.id FROM onefleet.parameters i WHERE i.w1=%s AND i.w2=%s AND i.w3=%s AND i.w4=%s AND i.w5=%s AND i.w6=%s AND i.dp=%s AND i.r=%s AND i.pc=%s AND i.pm=%s AND i.ne=%s"  
+        query = self.dbo.query(nam, (w[0], w[1], w[2], w[3], w[4], w[5], w[6], w[7], w[8], w[9], w[10])) 
         
         for t in query: 
-            ### print("----- ----- ", t[0])
+            print("----- getParamdb----- ", t[0])
             idp = t[0]
             
         return idp
@@ -621,11 +622,11 @@ class Total ( ):
                         
         ### print("\n\n*** ", tmp)     
         sql = "INSERT INTO onefleet.inputdata (id_estacion, fecha_inicio, fecha_final, clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-               
+        print("\n\n*** ", tmp)       
         if  len(tmp) == 1: 
-            self.db.insert(sql, tmp ) 
+            self.dbo.insert(sql, tmp  ) ### self.db.insert(sql, tmp[0] )
         else :        
-            self.db.insert(sql, tmp, " ")
+            self.dbo.insert(sql, tmp, " ")
                 
  
         
@@ -636,10 +637,10 @@ class Total ( ):
         
         # Verificamos si la Data existe, si no existe se llama al método genData
         # nam = "SELECT clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd  FROM onefleet.inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
-        nam = "SELECT COUNT(*)  id_estacion FROM onefleet.inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
-        query = self.db.query(nam, (self.getidest(self.parameters["stations"][w], self.companies[w]), fini.strftime(self.formato), ffin.strftime(self.formato), )) 
+        nam = "SELECT COUNT(*) id_estacion FROM onefleet.inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
+        query = self.dbo.query(nam, (self.getidest(self.parameters["stations"][w], self.companies[w]), fini.strftime(self.formato), ffin.strftime(self.formato), )) 
         # print('---0---', self.idestacion[w], self.parameters["stations"][w]+'('+self.companies[w]+')', fini.strftime(self.formato)) 
-        i=self.db.nrows()  
+        i=self.dbo.nrows()  
         
         if i == 0:  
             
@@ -655,8 +656,8 @@ class Total ( ):
             infoest = []
             est = Estacion(self.parameters["stations"][w]+'('+self.companies[w]+')', self.getidest(self.parameters["stations"][w], self.companies[w]))
             
-            nam = "SELECT clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd  FROM onefleet.inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
-            query = self.db.query(nam, (self.getidest(self.parameters["stations"][w], self.companies[w]), fini.strftime(self.formato), ffin.strftime(self.formato), )) 
+            nam = "SELECT i.clase, i.nveh, i.maxrent, i.mediarent, i.sdrent, i.maxmant, mediamant, sdmant,  maxavail, i.mediaavail, i.sdavail, i.maxoper, i.mediaoper, i.sdoper, i.maxopfl, i.mediaopfl, i.sdopfl, i.ndias, i.vtotd, i.vmaxd, i.vmind, i.vprod, i.vintd  FROM onefleet.inputdata i  WHERE i.id_estacion = %s AND i.fecha_inicio =%s AND i.fecha_final =%s"  
+            query = self.dbo.query(nam, (self.getidest(self.parameters["stations"][w], self.companies[w]), fini.strftime(self.formato), ffin.strftime(self.formato), )) 
         
             nn = []
             nv = [] 
@@ -730,14 +731,14 @@ class Total ( ):
         
         
         
-    def genDataSt(self, fini, ffin, w) : 
+    def genDataSt(self, fini, ffin, w) :  
         db2 = DBkm100()
-        
         # obtenemos Los indicadores de cada estación por grupo a partir de la
         # Data histórica
         #* nam = "SELECT kmbi.flota_historica_proveedor.mva, v.id  , descripcion_estado, fecha , clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.mva= kmbi.flota_historica_proveedor.mva JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
-        nam = "SELECT kmbi.flota_historica_proveedor.chasis, v.id  , descripcion_estado, fecha , clase FROM kmbi.flota_historica_proveedor JOIN km100.vehiculo v on v.chasis= kmbi.flota_historica_proveedor.chasis JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND kmbi.flota_historica_proveedor.fecha BETWEEN %s AND %s"  
-        query = self.db.query(nam, (self.parameters["stations"][w], self.companies[w], fini.strftime(self.formato), ffin.strftime(self.formato), )) 
+        nam = "SELECT k.chasis, v.id, k.descripcion_estado, k.fecha, v.clase FROM kmbi.flota_historica_proveedor k JOIN km100.vehiculo v on v.chasis= k.chasis JOIN km100.estacion e on e.id_estacion = v.asignacion_estacion JOIN km100.empresa em on em.id_empresa = e.id_empresa WHERE e.nombre = %s AND em.nombre = %s AND k.fecha BETWEEN %s AND %s"  
+        print('---0---', self.parameters["stations"][w], self.companies[w], fini.strftime(self.formato), ffin.strftime(self.formato)) 
+        query = self.db.query(nam, (self.parameters["stations"][w], self.companies[w], fini.strftime(self.formato), ffin.strftime(self.formato)  )) 
         print('---1---', self.parameters["stations"][w]+'('+self.companies[w]+')', fini.strftime(self.formato)) 
  
         his = []    

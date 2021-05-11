@@ -11,11 +11,15 @@ import mysql.connector
 
 class DBkm100(object):   
     
-    def __init__(self): 
+    def __init__(self, db=None): 
+        
+        if db == None:
+            db="km100"
+        
         self.conexion=mysql.connector.connect(host="localhost", 
                                   user="root", 
                                   passwd="090509", 
-                                  database="km100")
+                                  database=db)
         self.con=self.conexion.cursor(buffered=True)
         
         
