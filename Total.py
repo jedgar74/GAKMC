@@ -550,7 +550,7 @@ class Total ( ):
                 sql = "INSERT INTO onefleet.forecast (parametros, fecha_inicio, fecha_final, id_estacion, clase, nveh)  VALUES (%s, %s, %s,  %s, %s, %s)"
              
                 if  len(tmp) == 1: 
-                    self.dbo.insert(sql, tmp ) ### self.db.insert(sql, tmp[0])
+                    self.dbo.insert(sql, tmp[0]) ### self.db.insert(sql, tmp)
                 else :  
                     self.dbo.insert(sql, tmp, " ")
                
@@ -624,7 +624,7 @@ class Total ( ):
         sql = "INSERT INTO onefleet.inputdata (id_estacion, fecha_inicio, fecha_final, clase, nveh, maxrent, mediarent, sdrent, maxmant, mediamant, sdmant,  maxavail, mediaavail,  sdavail, maxoper, mediaoper, sdoper, maxopfl, mediaopfl, sdopfl, ndias, vtotd, vmaxd, vmind, vprod, vintd) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         print("\n\n*** ", tmp)       
         if  len(tmp) == 1: 
-            self.dbo.insert(sql, tmp  ) ### self.db.insert(sql, tmp[0] )
+            self.dbo.insert(sql, tmp[0]) ### self.db.insert(sql, tmp )
         else :        
             self.dbo.insert(sql, tmp, " ")
                 
