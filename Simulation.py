@@ -392,8 +392,7 @@ class Simulation ( ):
                          tmpv = valores[k][i] 
                          valores[k][i] = valores[k][j]
                          valores[k][j] = tmpv                    
-                     
-                     
+                      
                      
     
     def graphs(self, data, labl, stations, companies):
@@ -663,8 +662,7 @@ class Simulation ( ):
                     # print(tv)  
                     # print('---3---', tv[0], tv[1], tv[3], tv[2]) 
                     mkstatus = self.makedecision(" ", tv[1], tv[2]) 
-                    es.compare2(tv[0], tv[3], mkstatus) 
-                         
+                    es.compare2(tv[0], tv[3], mkstatus)  
                         
                 # es.prints2()  
                 # print("000000 ", es.idveh) 
@@ -720,8 +718,7 @@ class Simulation ( ):
             # En este caso aquella que tenga menor valor de la función objetivo
             bfit = np.Inf
             vfit = np.ones(var.stations.STATIONS)
-            print(typesOfVehicles)
-            
+            print(typesOfVehicles) 
             
             for j in range(entity.stats.nSolutions()):  
                 print("\nChromosome")     
@@ -961,8 +958,7 @@ class Simulation ( ):
                 
         # print('+4++', valors)          
         
-        return valorf
-    
+        return valorf 
     
         
        

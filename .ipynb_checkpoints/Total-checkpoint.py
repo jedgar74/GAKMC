@@ -547,16 +547,15 @@ class Total ( ):
         
                 for t in range(len(typesvh)): 
                     his = []
-                    print('++0++ ', forecast ) 
                     his.append(self.param_upd)
                     his.append(fini)
                     his.append(ffin)
                     his.append(self.getidest(self.parameters["stations"][w], self.companies[w]))
                     his.append(typesvh[t])
-                    his.append(forecast[w][t])
-                    print('++1++ ', his) 
+                    his.append(forecast[i][t])
+                    
                     tmp.append(his)  
-                print('++2++ ', tmp)    
+                ### print('-----+++++--', tmp)    
                 sql = "INSERT INTO onefleet.forecast (parametros, fecha_inicio, fecha_final, id_estacion, clase, nveh)  VALUES (%s, %s, %s,  %s, %s, %s)"
              
                 if  len(tmp) == 1: 
